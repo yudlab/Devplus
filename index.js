@@ -20,4 +20,4 @@ var ftp = {
     }
 }
 
-ftp.connect(siteid);
+ftp.connect();
