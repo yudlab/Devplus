@@ -1,7 +1,10 @@
 <template>
   <div class="pid">
     <select v-model="a">
-      <option v-for="selected in selected1" v-bind:key="selected.id" v-bind:value="{ id: selected.id, name: selected.name }">{{selected.name}}</option>
+      <option v-for="pid in pids"
+              v-bind:key="pid.id"
+              v-bind:value="pid.id">{{pid.name}}
+      </option>
     </select>
     <p>{{a.id}}</p>
   </div>
@@ -12,21 +15,18 @@
 import axios from 'axios';
 
 export default {
-  name: 'pid',
+  name: 'pids',
   data() {
     return {
-      selected1: 1,
-      a: {
-        id: -1,
-        name: "ss"
-      }
+      pids: "need fetch...",
+      a: String
     };
   },
   created: function() {
     axios
-      .get('https://jsonplaceholder.typicode.com/users')
+      .get('http://127.0.0.1:3000/pids')
       .then(res => {
-        this.selected1 = res.data;
+        this.pids = res.data;
       })
   }
 };
