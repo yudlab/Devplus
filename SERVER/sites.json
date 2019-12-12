@@ -1,48 +1,305 @@
-[
-    {
-      "id": 1,
-      "name": "Leanne Graham",
-      "username": "Bret",
-      "email": "Sincere@april.biz",
-      "address": {
-        "street": "Kulas Light",
-        "suite": "Apt. 556",
-        "city": "Gwenborough",
-        "zipcode": "92998-3874",
-        "geo": {
-          "lat": "-37.3159",
-          "lng": "81.1496"
-        }
-      },
-      "phone": "1-770-736-8031 x56442",
-      "website": "hildegard.org",
-      "company": {
-        "name": "Romaguera-Crona",
-        "catchPhrase": "Multi-layered client-server neural-net",
-        "bs": "harness real-time e-markets"
-      }
-    },
-    {
-      "id": 2,
-      "name": "Ervin Howell",
-      "username": "Antonette",
-      "email": "Shanna@melissa.tv",
-      "address": {
-        "street": "Victor Plains",
-        "suite": "Suite 879",
-        "city": "Wisokyburgh",
-        "zipcode": "90566-7771",
-        "geo": {
-          "lat": "-43.9509",
-          "lng": "-34.4618"
-        }
-      },
-      "phone": "010-692-6593 x09125",
-      "website": "anastasia.net",
-      "company": {
-        "name": "Deckow-Crist",
-        "catchPhrase": "Proactive didactic contingency",
-        "bs": "synergize scalable supply-chains"
-      }
-    }
-]    
+{
+	"tati": {
+		"id": "1",
+		"name": "Tati",
+		"templateRoot": "_NEWSLETTER\\img.tati.fr\\_template",
+		"newsletterTypes": {
+			"default": "nl_template_default_2018",
+			"carte": "nl_template_carte_2018",
+			"catalogue": "nl_template_catalogue_2018",
+			"magasin": "nl_template_magasin_2018"
+		},
+		"language": {
+			"fr": "\\"
+		},
+		"mywebpath": "/My_Web/_NEWSLETTER/img.tati.fr/news/",
+		"ftp": {
+			"host": "img.tati.fr",
+			"username": "newstati",
+			"password": "tyEOCviRaM",
+			"port": "21",
+			"root": "/"
+		},
+		"splio": {
+			"univers": "tati",
+			"username": "artemis",
+			"password": "webpopTATI"
+		}
+	},
+	"bm": {
+		"id": "2",
+		"name": "Best Mountain",
+		"templateRoot": "_NEWSLETTER\\img.best-mountain.com\\_template",
+		"newsletterTypes": {
+			"default": "nl_template_2018"
+		},
+		"language": {
+			"fr": "\\"
+		},
+		"mywebpath": "/My_Web/_NEWSLETTER/img.tati.fr/news/",
+		"ftp": {
+			"host": "img.tati.fr",
+			"username": "newstati",
+			"password": "tyEOCviRaM",
+			"port": "21",
+			"root": "/"
+		},
+		"splio": {
+			"univers": "tati",
+			"username": "artemis",
+			"password": "webpopTATI"
+		}
+	},
+	"atmo": {
+		"id": "3",
+		"name": "Atmosphera",
+		"templateRoot": "_NEWSLETTER\\img.atmosphera.com\\_template",
+		"newsletterTypes": {
+			"default": "nl_template_2018"
+		},
+		"language": {
+			"fr": "\\"
+		},
+		"mywebpath": "/My_Web/_NEWSLETTER/img.tati.fr/news/",
+		"ftp": {
+			"host": "img.tati.fr",
+			"username": "newstati",
+			"password": "tyEOCviRaM",
+			"port": "21",
+			"root": "/"
+		},
+		"splio": {
+			"univers": "tati",
+			"username": "artemis",
+			"password": "webpopTATI"
+		}
+	},
+	"hesperide": {
+		"id": "4",
+		"name": "Hesperide",
+		"templateRoot": "_NEWSLETTER\\img.hesperide.com\\_template",
+		"newsletterTypes": {
+			"default": "nl_template_2019"
+		},
+		"language": {
+			"fr": "\\"
+		},
+		"mywebpath": "/My_Web/_NEWSLETTER/img.tati.fr/news/",
+		"ftp": {
+			"host": "img.tati.fr",
+			"username": "newstati",
+			"password": "tyEOCviRaM",
+			"port": "21",
+			"root": "/"
+		},
+		"splio": {
+			"univers": "tati",
+			"username": "artemis",
+			"password": "webpopTATI"
+		}
+	},
+	"jonak": {
+		"id": "5",
+		"name": "Jonak",
+		"templateRoot": "_NEWSLETTER\\img.jonak.com\\_template",
+		"newsletterTypes": {
+			"default": "nl_template_2019"
+		},
+		"language": {
+			"fr": "nl_template_fr_2018",
+			"en": "nl_template_en_2018"
+		},
+		"mywebpath": "/My_Web/_NEWSLETTER/img.tati.fr/news/",
+		"ftp": {
+			"host": "img.tati.fr",
+			"username": "newstati",
+			"password": "tyEOCviRaM",
+			"port": "21",
+			"root": "/"
+		},
+		"splio": {
+			"univers": "tati",
+			"username": "artemis",
+			"password": "webpopTATI"
+		}
+	},
+	"messegue": {
+		"id": "6",
+		"name": "Messegue",
+		"templateRoot": "_NEWSLETTER\\img.messegue.com\\_template",
+		"newsletterTypes": {
+			"default": "nl_template_201902"
+		},
+		"language": {
+			"fr": "\\"
+		},
+		"mywebpath": "/My_Web/_NEWSLETTER/img.tati.fr/news/",
+		"ftp": {
+			"host": "img.tati.fr",
+			"username": "newstati",
+			"password": "tyEOCviRaM",
+			"port": "21",
+			"root": "/"
+		},
+		"splio": {
+			"univers": "tati",
+			"username": "artemis",
+			"password": "webpopTATI"
+		}
+	},
+	"paulandjoe": {
+		"id": "7",
+		"name": "Paul and Joe",
+		"templateRoot": "_NEWSLETTER\\img.paulandjoe.com\\_template",
+		"newsletterTypes": {
+			"default": "nl_template_2019"
+		},
+		"language": {
+			"fr": "nl_template_fr_2018",
+			"en": "nl_template_en_2018",
+			"us": "nl_template_us_2018",
+			"uk": "nl_template_uk_2018"
+		},
+		"mywebpath": "/My_Web/_NEWSLETTER/img.tati.fr/news/",
+		"ftp": {
+			"host": "img.tati.fr",
+			"username": "newstati",
+			"password": "tyEOCviRaM",
+			"port": "21",
+			"root": "/"
+		},
+		"splio": {
+			"univers": "tati",
+			"username": "artemis",
+			"password": "webpopTATI"
+		}
+	},
+	"rugbydivision": {
+		"id": "8",
+		"name": "Rugby Division",
+		"templateRoot": "_NEWSLETTER\\img.rugbydivision.com\\_template",
+		"newsletterTypes": {
+			"default": "nl_template_fr_2018",
+			"clicLead": "nl_template_cliclead_2018",
+			"advertise": "nl_template_advertise_2018"
+		},
+		"language": {
+			"fr": "\\"
+		},
+		"mywebpath": "/My_Web/_NEWSLETTER/img.tati.fr/news/",
+		"ftp": {
+			"host": "img.tati.fr",
+			"username": "newstati",
+			"password": "tyEOCviRaM",
+			"port": "21",
+			"root": "/"
+		},
+		"splio": {
+			"univers": "tati",
+			"username": "artemis",
+			"password": "webpopTATI"
+		}
+	},
+	"suncoo": {
+		"id": "9",
+		"name": "Suncoo Paris",
+		"templateRoot": "_NEWSLETTER\\img.suncoo-paris.com\\_template",
+		"newsletterTypes": {
+			"default": "nl_template_default"
+		},
+		"language": {
+			"fr": "\\"
+		},
+		"mywebpath": "/My_Web/_NEWSLETTER/img.tati.fr/news/",
+		"ftp": {
+			"host": "img.tati.fr",
+			"username": "newstati",
+			"password": "tyEOCviRaM",
+			"port": "21",
+			"root": "/"
+		},
+		"splio": {
+			"univers": "tati",
+			"username": "artemis",
+			"password": "webpopTATI"
+		}
+	},
+	"talika": {
+		"id": "10",
+		"name": "Talika",
+		"templateRoot": "_NEWSLETTER\\img.talika.fr\\_template",
+		"newsletterTypes": {
+			"default": "nl_template_default",
+			"advertise": "advertise_template_2018",
+			"cliclead": "cliclead_template_2018"
+		},
+		"language": {
+			"fr": "nl_template_fr_2018",
+			"en": "nl_template_en_2018",
+			"us": "nl_template_us_2018",
+			"uk": "nl_template_uk_2018"
+		},
+		"mywebpath": "/My_Web/_NEWSLETTER/img.tati.fr/news/",
+		"ftp": {
+			"host": "img.tati.fr",
+			"username": "newstati",
+			"password": "tyEOCviRaM",
+			"port": "21",
+			"root": "/"
+		},
+		"splio": {
+			"univers": "tati",
+			"username": "artemis",
+			"password": "webpopTATI"
+		}
+	},
+	"tilamarch": {
+		"id": "11",
+		"name": "Tilamarch",
+		"templateRoot": "_NEWSLETTER\\img.tilamarch.com\\_template",
+		"newsletterTypes": {
+			"default": "nl_template_2018"
+		},
+		"language": {
+			"fr": "nl_template_fr_2018",
+			"en": "nl_template_en_2018"
+		},
+		"mywebpath": "/My_Web/_NEWSLETTER/img.tati.fr/news/",
+		"ftp": {
+			"host": "img.tati.fr",
+			"username": "newstati",
+			"password": "tyEOCviRaM",
+			"port": "21",
+			"root": "/"
+		},
+		"splio": {
+			"univers": "tati",
+			"username": "artemis",
+			"password": "webpopTATI"
+		}
+	},
+	"wshop": {
+		"id": "12",
+		"name": "WSHOP",
+		"templateRoot": "_NEWSLETTER\\img.wshop-cloudcommerce.com\\_template",
+		"newsletterTypes": {
+			"default": "nl_template_wshop_2018"
+		},
+		"language": {
+			"fr": "\\"
+		},
+		"mywebpath": "/My_Web/_NEWSLETTER/img.tati.fr/news/",
+		"ftp": {
+			"host": "img.tati.fr",
+			"username": "newstati",
+			"password": "tyEOCviRaM",
+			"port": "21",
+			"root": "/"
+		},
+		"splio": {
+			"univers": "tati",
+			"username": "artemis",
+			"password": "webpopTATI"
+		}
+	}
+}
