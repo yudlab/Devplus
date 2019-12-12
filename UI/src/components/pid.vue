@@ -1,12 +1,18 @@
 <template>
   <div class="pid">
-    <select v-model="a">
+    <select v-model="a"
+            v-on:change="fetch(a, $event)">
       <option v-for="pid in pids"
               v-bind:key="pid.id"
-              v-bind:value="pid.id">{{pid.name}}
+              v-bind:value="pid">{{pid.name}}
       </option>
     </select>
-    <p>{{a.id}}</p>
+    <table v-for="aa in a">
+      <tr>
+        <td>{{aa}}</td>
+      </tr>
+    </table>
+    </ul>
   </div>
 </template>
 
@@ -19,7 +25,7 @@ export default {
   data() {
     return {
       pids: "need fetch...",
-      a: String
+      a: "need fetch..."
     };
   },
   created: function() {
@@ -28,6 +34,16 @@ export default {
       .then(res => {
         this.pids = res.data;
       })
-  }
+  },
+  methods: {
+    fetch: function (a) {
+      alert(a.name)
+    }
+  },
 };
 </script>
+<style scoped>
+  table {
+    border: 1px solid #000000;
+  }
+</style>
