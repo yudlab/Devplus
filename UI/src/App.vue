@@ -9,7 +9,7 @@
 </template>
 
 <style>
-@import '/src/assets/css/style.css';
+/*@import '/src/assets/css/style.css';*/
 </style>
 <style lang="scss">
 #app {
@@ -21,11 +21,20 @@
 }
 
 #nav {
-  padding: 30px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: #34495e;
+  width: 100%;
+  height: 60px;
+  position: relative;
+
 
   a {
     font-weight: bold;
-    color: #2c3e50;
+    color: #FFFFFF;
+    padding: 0 15px;
 
     &.router-link-exact-active {
       color: #42b983;

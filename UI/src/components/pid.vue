@@ -1,18 +1,13 @@
 <template>
   <div class="pid">
-    <select v-model="a"
-            v-on:change="fetch(a, $event)">
+    <select class="pid-select"
+            v-model="a"
+            v-on:change="pidChanged">
       <option v-for="pid in pids"
               v-bind:key="pid.id"
               v-bind:value="pid">{{pid.name}}
       </option>
     </select>
-    <table v-for="aa in a">
-      <tr>
-        <td>{{aa}}</td>
-      </tr>
-    </table>
-    </ul>
   </div>
 </template>
 
@@ -25,7 +20,8 @@ export default {
   data() {
     return {
       pids: "need fetch...",
-      a: "need fetch..."
+      a: "need fetch...",
+      obj: {}
     };
   },
   created: function() {
@@ -34,16 +30,30 @@ export default {
       .then(res => {
         this.pids = res.data;
       })
-  },
+  },  
   methods: {
-    fetch: function (a) {
-      alert(a.name)
+    add () {
+      axios
+        .post('http://127.0.0.1:3000/getpaths', this.obj)
+        .then(res => {
+          this.pids = res.data;
+        })
+    },
+    pidChanged () {
+      this.$emit('pidChanged', this.a);
     }
   },
 };
 </script>
 <style scoped>
-  table {
-    border: 1px solid #000000;
+  .pid {
+    background-color: #2c3e50;
+    color: #FFFFFF;
+    width: 100%;
+    height: 100%;
+  }
+  select {
+    border: 2px solid #FFFFFF;
+    border-radius: 5px;
   }
 </style>
