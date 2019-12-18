@@ -23,7 +23,7 @@ export default {
       week: '',
       cmpid: '',
       newsData: '',
-      baseURL: update(this.currentPid.baseURI),
+      baseURL: '',
     };
   },
   components: {
@@ -33,14 +33,11 @@ export default {
   methods: {
     pidChangedHandler (value) {
       this.currentPid = value;
+      this.baseURL = this.currentPid.baseURI;
     },
     newsDataHandler (value) {
       this.newsData = value;
     },
-    update (aa) {
-      console.log(aa);
-      return "test";
-    }
   },
 };
 </script>
