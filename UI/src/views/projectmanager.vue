@@ -1,10 +1,11 @@
 <template>
   <div class="pman">
     <pid @pidChanged="pidChangedHandler"/>
-    <createnews @dateChanged="dateChangedHandler"/>
-    <div v-if="week">
-      week number: {{week}}
-    </div>
+    <createnews :baseURL="baseURL" v-if="currentPid" @newsDataChange="newsDataHandler"/>
+    <div class="path" v-if="currentPid && newsData">Will be saved in: {{currentPid.newsletterRoot}}S{{newsData.week}}\{{newsData.cmpid}}\</div>
+    <div>{{newsData}}</div>
+    <br><br>
+    <div>{{currentPid}}</div>
   </div>
 </template>
 
@@ -20,6 +21,9 @@ export default {
       selected: 2,
       currentPid: null,
       week: '',
+      cmpid: '',
+      newsData: '',
+      baseURL: update(this.currentPid.baseURI),
     };
   },
   components: {
@@ -30,14 +34,18 @@ export default {
     pidChangedHandler (value) {
       this.currentPid = value;
     },
-    dateChangedHandler (value) {
-      this.week = value;
+    newsDataHandler (value) {
+      this.newsData = value;
+    },
+    update (aa) {
+      console.log(aa);
+      return "test";
     }
   },
 };
 </script>
 
-<style>
+<style lang="scss">
     .pid-select {
       position: absolute;
       top: 15px;
@@ -58,6 +66,15 @@ export default {
       width: 155px;
       border-radius: 5px;
       border: 2px solid #3498db;
+    }
+
+    .pman {
+      .path {
+        position: absolute;
+        top: 18px;
+        left: 20%;
+        color: #FFFFFF;
+      }
     }
 
 </style>

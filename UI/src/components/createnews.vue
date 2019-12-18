@@ -1,11 +1,11 @@
 <template>
   <div class="createnews">
     <div class="primary">
-        <input v-model="cmpid" v-on:change="computecmpid" name="cmpid" type="text" placeholder="cmpid">
+        <input v-model="cmpid" v-on:change="newsDataChanged" name="cmpid" type="text" placeholder="cmpid">
     </div>
     <div class="secondary" v-if="cmpid.length > 7">
         <input v-model="tracking" name="tracking" type="text" placeholder="tracking">
-        <input v-model="date" v-on:change="computeWeek" name="date" type="text" placeholder="date">
+        <input v-model="date" name="date" type="text" placeholder="date">
         <input v-if="lang" v-model="lang" name="lang" type="text" placeholder="lang">
     </div>
     <div class="secondary" v-if="cmpid.length > 7">
@@ -19,38 +19,34 @@
 
 <script>
 export default {
-  data() {
-    return {
-      cmpid: 'nl_test_20191217',
-      date: '',
-      preheader_text: '',
-      preheader_link: '',
-      subject: '',
-      ml: '',
-      tracking: '',
-      lang: '',
-      weeknum: ''
-
-    };
-  },
+    data() {
+        return {
+        cmpid: 'nl_test_20190101',
+        date: '',
+        preheader_text: '',
+        preheader_link: this.baseURL,
+        subject: '',
+        ml: '',
+        tracking: '',
+        lang: '',
+        week: '',
+        };
+    },
     methods: {
-        computecmpid () {
+        newsDataChanged () {
             this.tracking = this.cmpid;
             var mycmpidarr = this.cmpid.split('_');
-            console.log(mycmpidarr);
-            if(mycmpidarr.length==3){
-            this.date = mycmpidarr[2];
-            }
-            if(mycmpidarr.length==4){
-            this.date = mycmpidarr[3];
-            this.lang = mycmpidarr[2];
-            }
+                if(mycmpidarr.length==3){
+                this.date = mycmpidarr[2];
+                }
+                if(mycmpidarr.length==4){
+                this.date = mycmpidarr[3];
+                this.lang = mycmpidarr[2];
+                }
+            this.week = this.getWeek(this.date);
+            this.$emit('newsDataChange', this.$data);
         },
-        computeWeek () {
-            this.$emit('dateChanged', getWeek(this.date));
-        }
-    },
-    getWeek () {
+        getWeek (rawdate) {
             if (rawdate.length == '8') {
             var year = parseInt(rawdate.slice(0, 4));
             var month = parseInt(rawdate.slice(4, 6));
@@ -58,12 +54,20 @@ export default {
             var thatDay = new Date(year, month-1, date);
             var dateReset = new Date(thatDay.getFullYear(), 0, 1);
             var week = Math.ceil((((thatDay - dateReset) / 86400000) + dateReset.getDay() + 1) / 7);
-            this.weeknum = week;
-            console.log(week);
-            return week;
+                if(week<10){
+                    return '0' + week;
+                } else {
+                    return week;
+                }
             }
             return new Error("Need to be in the format: YYYYMMDD !");
         },
+    },
+    props: {
+        baseURL: {
+            type: String,
+        }
+    }
 };
 </script>
 
