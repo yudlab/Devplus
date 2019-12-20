@@ -1,10 +1,25 @@
 const express = require('express')
 const app = express()
-var cors = require('cors');
-const port = 3000
+const cors = require('cors');
+const port = 9010;
 var pids = require('./SERVER/sites.json');
 var fs = require('fs');
 var path = require('path');
+
+
+// Add headers
+app.use(function (req, res, next) {
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type')
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    next();
+});
+
+app.use(cors());
+app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+
+app.get('/pids', (req, res) => res.send(pids))
 
 
 function walk(currentDirPath, callback, isRecursive = false) {
@@ -12,6 +27,7 @@ function walk(currentDirPath, callback, isRecursive = false) {
         if (err) {
             throw new Error(err);
         }
+        //console.log("files: ", files);
         files.forEach(function (name) {
             var filePath = path.join(currentDirPath, name);
             var stat = fs.statSync(filePath);
@@ -26,9 +42,11 @@ function walk(currentDirPath, callback, isRecursive = false) {
     });
 }
 
-walk(__dirname+'/UI', function(filePath, stat) {
-    console.log([stat.isDirectory(), stat.isFile(), filePath]);
-}, true);
+// walk(__dirname+'/UI', function(filePath, stat) {
+//    console.log(stat.isFile() + filePath + ',');
+// }, false);
+// walk(".");
+
 
 
 
@@ -42,9 +60,9 @@ app.use(function (req, res, next) {
 });
 
 app.use(cors());
-app.get('/pids', (req, res) => res.send(pids))
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
+app.get('/pids', (req, res) => res.send(pids))
 
 
 pid = {
@@ -67,4 +85,4 @@ var ftp = {
     }
 }
 
-ftp.connect();
+//ftp.connect();

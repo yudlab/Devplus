@@ -2,6 +2,7 @@
 	"tati": {
 		"id": "1",
 		"name": "Tati",
+		"baseURI": "https://www.tati.fr/",
 		"templateRoot": "_NEWSLETTER\\img.tati.fr\\_template",
 		"newsletterTypes": {
 			"default": "nl_template_default_2018",
