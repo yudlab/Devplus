@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="cur-unavailable">
     <div id="nav">
       <router-link to="/">Home</router-link> |
       <router-link to="/pman">Project Manager</router-link>
@@ -7,11 +7,9 @@
     <router-view/>
   </div>
 </template>
-
-<style>
-/*@import '/src/assets/css/style.css';*/
-</style>
+<style src="./assets/css/all.css"></style>
 <style lang="scss">
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -19,6 +17,8 @@
   text-align: center;
   color: #2c3e50;
   position: relative;
+  height: 100%;
+  width: 100%;
 }
 
 #nav {
