@@ -2,7 +2,8 @@
   <div id="app" class="cur-unavailable">
     <div id="nav">
       <router-link to="/">Home</router-link> |
-      <router-link to="/pman">Project Manager</router-link>
+      <router-link to="/pman">NL Manager</router-link> |
+      <router-link to="/codeedit">Code Editor</router-link>
     </div>
     <router-view/>
   </div>

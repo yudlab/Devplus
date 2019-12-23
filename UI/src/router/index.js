@@ -11,6 +11,13 @@ const routes = [
     component: Home,
   },
   {
+    path: '/codeedit',
+    name: 'codeedit',
+    component() {
+      return import('../views/codeedit.vue');
+    },
+  },
+  {
     path: '/pman',
     name: 'pman',
     // route level code-splitting

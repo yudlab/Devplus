@@ -69,7 +69,7 @@ export default {
       .path {
         position: absolute;
         top: 18px;
-        left: 20%;
+        right: 20%;
         color: #FFFFFF;
       }
     }

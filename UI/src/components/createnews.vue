@@ -123,13 +123,14 @@ export default {
         }
 
         input {
-            border: 2px solid #3498db;
+            border: 1px solid #2c3e50;
             padding-left: 5px;
             height: 40px;
             width: 250px;
             margin-bottom: 5px;
             border-radius: 5px;
             margin: 5px;
+            position: relative;
         }
     }
     div.fileman {
