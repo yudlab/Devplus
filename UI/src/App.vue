@@ -1,21 +1,22 @@
 <template>
   <div id="app" class="cur-unavailable">
     <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/pman">NL Manager</router-link> |
-      <router-link to="/codeedit">Code Editor</router-link>
+      <router-link to="/">Dashboard</router-link> |
+      <router-link to="/pman">Create</router-link> |
+      <router-link to="/codeedit">Editor</router-link> 
     </div>
     <router-view/>
   </div>
 </template>
 <style src="./assets/css/all.css"></style>
 <style lang="scss">
-
+html {
+  height: 100%;
+}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
   position: relative;
   height: 100%;
