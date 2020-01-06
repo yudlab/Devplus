@@ -2,7 +2,9 @@
   <div class="pman">
     <pid @pidChanged="pidChangedHandler"/>
     <createnews :baseURL="baseURL" v-if="currentPid" @newsDataChange="newsDataHandler"/>
-    <div class="path" v-if="currentPid && newsData">Will be saved in: {{currentPid.newsletterRoot}}S{{newsData.week}}\{{newsData.cmpid}}\</div>
+    <div class="path" v-if="currentPid && newsData">Will be saved in: {{currentWd}}</div>
+    <div>{{currentWd}}</div>
+    <br><br>
     <div>{{newsData}}</div>
     <br><br>
     <div>{{currentPid}}</div>
@@ -24,6 +26,7 @@ export default {
       cmpid: '',
       newsData: '',
       baseURL: '',
+      currentWd: ''
     };
   },
   components: {
@@ -37,6 +40,7 @@ export default {
     },
     newsDataHandler (value) {
       this.newsData = value;
+      this.currentWd = this.currentPid.newsletterRoot + 'S' + this.newsData.week + '\\' + this.newsData.cmpid + '\\'
     },
   },
 };

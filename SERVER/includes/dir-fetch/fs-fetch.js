@@ -4,13 +4,19 @@ var path = require('path');
 function readDirectory(dir, callback){
     
     fs.readdir(dir, function(err, items) {
-        var Logs = [];
-        items.forEach(function (item){
-            var filePath = path.join(dir, item);
-            var stat = fs.statSync(filePath);
-            Logs.push([stat.isFile(), filePath]);
-        })
-        callback(Logs);       
+        if(err){
+            callback("Error:"+err.errno);
+            return;
+        }
+        
+            var Logs = [];
+            items.forEach(function (item){
+                var filePath = path.join(dir, item);
+                var stat = fs.statSync(filePath);
+                Logs.push([stat.isFile(), filePath]);
+            })
+            callback(Logs);
+        
     }); 
 }
 exports.readDirectory = readDirectory;

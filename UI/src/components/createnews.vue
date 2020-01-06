@@ -1,5 +1,6 @@
 <template>
   <div>
+      <div>{{output}}</div>
       <div id="createnews" class="createnews">
         <div class="primary">
             <input v-model="cmpid" v-on:change="newsDataChanged" name="cmpid" type="text" placeholder="cmpid">
@@ -16,15 +17,16 @@
             <input v-model="subject" name="subject" type="text" placeholder="subject">
             <input v-model="ml" name="ml" type="text" placeholder="ML">
         </div>
-        <div><a v-on:click="fileman" class="fas fa-angle-double-right next cur-unavailable"></a></div>  
-    </div>
-    <div id="fileman" class="fileman">
-        xxx  
+        <div><a v-on:click="submitData2Api" class="fas fa-angle-double-right next cur-unavailable"></a></div>  
     </div>
   </div>
 </template>
 
+
+
 <script>
+import axios from 'axios';
+
 export default {
     data() {
         return {
@@ -37,6 +39,8 @@ export default {
         tracking: '',
         lang: '',
         week: '',
+        output: '',
+        cwd: 'C:\www'
         };
     },
     methods: {
@@ -69,8 +73,41 @@ export default {
             }
             return new Error("Need to be in the format: YYYYMMDD !");
         },
-        fileman () {
-            console.log("fileman clicked")
+        submitData2Api () {
+            console.log("fileman clicked");
+            let api1res = this;
+            let data = {
+                dir: this.cwd
+            };
+            let axiosConfig = {
+                headers: {
+                    "Content-Type": "application/json;charset=UTF-8",
+                    "Access-Control-Allow-Origin": "*",
+                }
+            };
+            this.axios.post('http://127.0.0.1:3000/getpath', data, axiosConfig)
+            .then(function (response) {
+                api1res.output = response.data;
+            })
+            .catch(function (error) {
+                api1res.output = error;
+                if (error.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                console.log(error.response.data);
+                console.log(error.response.status);
+                console.log(error.response.headers);
+                } else if (error.request) {
+                // The request was made but no response was received
+                // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                // http.ClientRequest in node.js
+                console.log("Err1:"+error.request);
+                } else {
+                // Something happened in setting up the request that triggered an Error
+                console.log('Err2:', error.message);
+                }
+                console.log('Err3:',error.config);
+            });
         },
     },
     props: {
@@ -132,12 +169,5 @@ export default {
             margin: 5px;
             position: relative;
         }
-    }
-    div.fileman {
-        position: relative;
-        display: none;
-        height: 100%;
-        width: 100%;
-        background-color: #3498db;
     }
 </style>
