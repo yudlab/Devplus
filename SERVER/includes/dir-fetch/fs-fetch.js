@@ -2,20 +2,25 @@ var fs = require('fs');
 var path = require('path');
 
 function readDirectory(dir, callback){
+
+    if(!dir){
+        callback("Error: no path defined.", dir)
+    }
     
     fs.readdir(dir, function(err, items) {
+
         if(err){
             callback("Error:"+err.errno);
             return;
         }
         
-            var Logs = [];
-            items.forEach(function (item){
-                var filePath = path.join(dir, item);
-                var stat = fs.statSync(filePath);
-                Logs.push([stat.isFile(), filePath]);
-            })
-            callback(Logs);
+        var Logs = [];
+        items.forEach(function (item){
+            var filePath = path.join(dir, item);
+            var stat = fs.statSync(filePath);
+            Logs.push([stat.isFile(), filePath]);
+        })
+        callback(JSON.stringify(Logs));
         
     }); 
 }

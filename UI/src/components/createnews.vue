@@ -1,7 +1,9 @@
 <template>
   <div>
-      <div>{{output}}</div>
+      <div id="output">{{output}}</div>
       <div id="createnews" class="createnews">
+        <input v-model="cwd.path" v-on:change="scanDir(cwd.path)" name="path" type="text" placeholder="path">
+
         <div class="primary">
             <input v-model="cmpid" v-on:change="newsDataChanged" name="cmpid" type="text" placeholder="cmpid">
             <div class="secondary" v-if="cmpid.length > 7">
@@ -17,7 +19,7 @@
             <input v-model="subject" name="subject" type="text" placeholder="subject">
             <input v-model="ml" name="ml" type="text" placeholder="ML">
         </div>
-        <div><a v-on:click="submitData2Api" class="fas fa-angle-double-right next cur-unavailable"></a></div>  
+        <div><a v-on:click="" class="fas fa-angle-double-right next cur-unavailable"></a></div>  
     </div>
   </div>
 </template>
@@ -26,7 +28,7 @@
 
 <script>
 import axios from 'axios';
-
+import qs from 'qs';
 export default {
     data() {
         return {
@@ -40,7 +42,8 @@ export default {
         lang: '',
         week: '',
         output: '',
-        cwd: 'C:\www'
+        cwd: { "path": "C:/www"},
+        output: '0',
         };
     },
     methods: {
@@ -73,40 +76,33 @@ export default {
             }
             return new Error("Need to be in the format: YYYYMMDD !");
         },
-        submitData2Api () {
-            console.log("fileman clicked");
-            let api1res = this;
-            let data = {
-                dir: this.cwd
-            };
-            let axiosConfig = {
-                headers: {
-                    "Content-Type": "application/json;charset=UTF-8",
-                    "Access-Control-Allow-Origin": "*",
+        scanDir (dir) {
+            $.ajax({
+                type: 'POST',
+                // make sure you respect the same origin policy with this url:
+                // http://en.wikipedia.org/wiki/Same_origin_policy
+                // Yud: CORS is not usefull in this project, will be left as demo
+                url: 'http://127.0.0.1:3000/getpath',
+                data: { 
+                    'dir': dir
+                },
+                success: function(msg){
+                   switch(msg){
+
+                       case 'Error:-4058':
+                           console.log("Error:-4058")
+                           $('#output').html(404)
+                           return 404;
+                       case '[]':
+                           console.log("Empty")
+                           $('#output').html(204)
+                           return "Empty"
+                       default:
+                           console.log(msg)
+                           $('#output').html(msg)
+
+                   }
                 }
-            };
-            this.axios.post('http://127.0.0.1:3000/getpath', data, axiosConfig)
-            .then(function (response) {
-                api1res.output = response.data;
-            })
-            .catch(function (error) {
-                api1res.output = error;
-                if (error.response) {
-                // The request was made and the server responded with a status code
-                // that falls out of the range of 2xx
-                console.log(error.response.data);
-                console.log(error.response.status);
-                console.log(error.response.headers);
-                } else if (error.request) {
-                // The request was made but no response was received
-                // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-                // http.ClientRequest in node.js
-                console.log("Err1:"+error.request);
-                } else {
-                // Something happened in setting up the request that triggered an Error
-                console.log('Err2:', error.message);
-                }
-                console.log('Err3:',error.config);
             });
         },
     },
