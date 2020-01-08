@@ -4,9 +4,7 @@
     <createnews :baseURL="baseURL" v-if="currentPid" @newsDataChange="newsDataHandler"/>
     <div class="path" v-if="currentPid && newsData">Will be saved in: {{currentWd}}</div>
     <div>{{currentWd}}</div>
-    <br><br>
     <div>{{newsData}}</div>
-    <br><br>
     <div>{{currentPid}}</div>
   </div>
 </template>
