@@ -27,9 +27,9 @@
                 <div><a v-on:click="submit()" class="fas fa-angle-double-right next cur-unavailable"></a></div>
             </div>
             <hr>
-            <div id="nldata">{{newsdata.currentPid.baseURL}}</div>
+            <div id="nldata" style="display: none">{{newsdata.currentPid.baseURL}}</div>
             <hr>
-            {{$data}}
+            <h1 style="display: none">{{$data}}</h1>
         </div>
     </div>
 </template>
@@ -53,6 +53,7 @@ export default {
         week: '',
         folderIsAvailable: false,
         newsdata: this.nldata,
+        cpd: '',
         };
     },
     methods: {
@@ -141,7 +142,6 @@ export default {
             }
         },
         submit (){
-            console.log(`@Submit->"this.newsdata" eql -> ${this.newsdata}`)
             if(this.newsdata!=='') {
                 $.ajax({
                 type: 'POST',
@@ -149,8 +149,8 @@ export default {
                 // http://en.wikipedia.org/wiki/Same_origin_policy
                 url: 'http://127.0.0.1:3000/submit-news',
                 data: { 
-                    'data': this.$data,
-                    'newsdata': this.newsdata,
+                    'folderData': this.cpd,
+                    'newsData': this.newsdata
                 },
                 success: function(msg){
                    console.log("From AJAX @subimt->res : ", msg);
@@ -175,8 +175,7 @@ export default {
             var path = this.newsdata.currentPid.nlWorkingDir + 'S' + this.week + '\\' + this.cmpid
             console.log("Path-> ", path)
             this.scanDir(path)
-            
-
+            this.cpd = path;
         }
     },
     mounted(){
