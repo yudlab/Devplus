@@ -2,9 +2,9 @@
 	"tati": {
 		"id": "1",
 		"name": "Tati",
-		"baseURI": "https://www.tati.fr/",
+		"baseURL": "https://www.tati.fr/",
 		"templateRoot": "_NEWSLETTER\\img.tati.fr\\_template",
-		"newsletterRoot": "C:\\www\\test\\",
+		"nlWorkingDir": "C:\\www\\test\\",
 		"newsletterTypes": {
 			"default": "nl_template_default_2018",
 			"carte": "nl_template_carte_2018",
@@ -32,8 +32,8 @@
 		"id": "2",
 		"name": "Best Mountain",
 		"templateRoot": "_NEWSLETTER\\img.best-mountain.com\\_template",
-		"newsletterRoot": "C:\\www\\test\\",
-		"baseURI": "https://www.bestmountain.com/",
+		"nlWorkingDir": "C:\\www\\test\\",
+		"baseURL": "https://www.bestmountain.com/",
 		"newsletterTypes": {
 			"default": "nl_template_2018"
 		},

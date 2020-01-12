@@ -1,10 +1,16 @@
 <template>
     <div>
         <div id="createnews" class="createnews">
-            <input v-model="cwd.path" v-on:change="scanDir(cwd.path)" name="path" type="text" placeholder="path">
+            <!--input v-model="cwd.path" v-on:change="scanDir(cwd.path)" name="path" type="text" placeholder="path"-->
             <div class="itm1">
                 <div class="primary">
-                    <input v-model="cmpid" v-on:change="newsDataChanged" name="cmpid" type="text" placeholder="cmpid">
+                    <input id="cmpid"
+                           v-model.lazy="cmpid"
+                           v-on:change="newsDataChanged"
+                           v-bind:class="{ available: this.folderIsAvailable == 1 }"
+                           name="cmpid"
+                           type="text"
+                           placeholder="cmpid">   
                     <div class="secondary" v-if="cmpid.length > 7">
                         <input v-model="tracking" name="tracking" type="text" placeholder="tracking">
                         <input v-model="date" name="date" type="text" placeholder="date">
@@ -18,9 +24,12 @@
                     <input v-model="subject" name="subject" type="text" placeholder="subject">
                     <input v-model="ml" name="ml" type="text" placeholder="ML">
                 </div>
-                <div><a v-on:click="scanDir(cwd.path)" class="fas fa-angle-double-right next cur-unavailable"></a></div>
+                <div><a v-on:click="submit()" class="fas fa-angle-double-right next cur-unavailable"></a></div>
             </div>
-            <div id="output">{{output}}</div>
+            <hr>
+            <div id="nldata">{{newsdata.currentPid.baseURL}}</div>
+            <hr>
+            {{$data}}
         </div>
     </div>
 </template>
@@ -36,18 +45,21 @@ export default {
         cmpid: 'nl_test_20190101',
         date: '',
         preheader_text: '',
-        preheader_link: this.baseURL,
+        preheader_link: "",
         subject: '',
         ml: '',
         tracking: '',
         lang: '',
         week: '',
-        output: '',
-        cwd: { "path": "C:/www"},
-        output: '0',
+        folderIsAvailable: false,
+        newsdata: this.nldata,
         };
     },
     methods: {
+        init () {
+            console.log("called->f(x): init @ methods")
+            console.clear()
+        },
         newsDataChanged () {
             this.tracking = this.cmpid;
             var mycmpidarr = this.cmpid.split('_');
@@ -78,43 +90,97 @@ export default {
             return new Error("Need to be in the format: YYYYMMDD !");
         },
         scanDir (dir) {
-            $.ajax({
+            if(dir) {
+                $.ajax({
                 type: 'POST',
                 // make sure you respect the same origin policy with this url:
                 // http://en.wikipedia.org/wiki/Same_origin_policy
-                // Yud: CORS is not usefull in this project, will be left as demo
                 url: 'http://127.0.0.1:3000/getpath',
                 data: { 
                     'dir': dir
                 },
                 success: function(msg){
+                   console.log("Res from AJAX: ", msg);
+                   console.log("dir @ scanDir(dir): ", dir);
+                   $('#cmpid-label').css('display', 'block')
                    switch(msg){
-
                        case '-4048':
                            console.log("No perm")
-                           $('#output').html(403)
-                           return 403;
+                           sessionStorage.setItem("cpd", "403");
+                           $('#cmpid').removeClass('ok')
+                           $('#cmpid').addClass('na')
+                           return 403
+                           break
                        case '-4058':
                            console.log("Not found")
-                           $('#output').html(404)
-                           return 404;
+                           sessionStorage.setItem("cpd", "404");
+                           $('#cmpid').removeClass('na')
+                           $('#cmpid').addClass('ok')
+                           return 404
+                           break
                        case '[]':
                            console.log("Empty")
-                           $('#output').html(204)
+                           sessionStorage.setItem("cpd", "204");
+                           $('#cmpid').removeClass('ok')
+                           $('#cmpid').addClass('na')
                            return 204
+                           break
                        default:
                            console.log(msg)
+                           $('#cmpid-label').css('color', '#e74c3c')
                            $('#output').html(msg)
-
-                   }
-                }
-            });
+                           sessionStorage.setItem("cpd", msg);
+                           $('#cmpid').removeClass('ok')
+                           $('#cmpid').addClass('na')
+                           return JSON.stringify(msg)
+                    }
+                }})
+            }
+            else {
+                console.log("No path defined @ scanDir().")
+            }
+        },
+        submit (){
+            console.log(`@Submit->"this.newsdata" eql -> ${this.newsdata}`)
+            if(this.newsdata!=='') {
+                $.ajax({
+                type: 'POST',
+                // make sure you respect the same origin policy with this url:
+                // http://en.wikipedia.org/wiki/Same_origin_policy
+                url: 'http://127.0.0.1:3000/submit-news',
+                data: { 
+                    'data': this.$data,
+                    'newsdata': this.newsdata,
+                },
+                success: function(msg){
+                   console.log("From AJAX @subimt->res : ", msg);
+                   
+                }})
+            }
+            else {
+                console.log("No path defined @ scanDir().")
+            }
         },
     },
     props: {
-        baseURL: {
-            type: String,
+        nldata: {
+            type: Object
         }
+    },
+    watch: {
+        cmpid: function (){
+            console.log("cmpid changed.")
+            this.folderIsAvailable = false
+            this.preheader_link = this.newsdata.currentPid.baseURL
+            var path = this.newsdata.currentPid.nlWorkingDir + 'S' + this.week + '\\' + this.cmpid
+            console.log("Path-> ", path)
+            this.scanDir(path)
+            
+
+        }
+    },
+    mounted(){
+        this.init()
     }
 };
 </script>
@@ -177,6 +243,14 @@ export default {
                 border-radius: 5px;
                 margin: 5px;
                 position: relative;
+            }
+            .primary {
+                .ok {
+                    border: 2px solid #2ecc71;
+                }
+                .na {
+                    border: 2px solid #e74c3c;
+                }
             }
         }
     }

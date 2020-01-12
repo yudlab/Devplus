@@ -41,6 +41,20 @@ app.post('/getpath',function(req,res){
     }
     readDirectory.readDirectory(req.body.dir, function(paths){
        res.send(paths);
+       console.log("paths: ",paths)
+       console.log(`TypeOf paths: ${typeof paths}`)
    });
 });
 
+app.post('/submit-news',function(req,res){
+    console.log("req.body: ", req.body)
+    console.log("req.body.dir: ", req.body.dir)
+    console.log("---")
+    console.log("req.query: ", req.query)
+    console.log("req.query.dir: ", req.query)
+    if(req.body){
+        console.log(JSON.stringify(req.body))
+        res.send(req.body)
+        return;
+    }
+});

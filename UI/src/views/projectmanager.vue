@@ -1,11 +1,11 @@
 <template>
   <div class="pman">
     <pid @pidChanged="pidChangedHandler"/>
-    <createnews :baseURL="baseURL" v-if="currentPid" @newsDataChange="newsDataHandler"/>
+    <createnews
+                :nldata="nldata"
+                 v-if="currentPid"
+                 @newsDataChange="newsDataHandler"/>
     <div class="path" v-if="currentPid && newsData">Will be saved in: {{currentWd}}</div>
-    <div>{{currentWd}}</div>
-    <div>{{newsData}}</div>
-    <div>{{currentPid}}</div>
   </div>
 </template>
 
@@ -24,7 +24,11 @@ export default {
       cmpid: '',
       newsData: '',
       baseURL: '',
-      currentWd: ''
+      nldata: {
+        "nldata": "",
+        "currentWd": "",
+      },
+      currentWd: '',
     };
   },
   components: {
@@ -33,12 +37,12 @@ export default {
   },
   methods: {
     pidChangedHandler (value) {
-      this.currentPid = value;
+      this.currentPid = this.nldata.currentPid = value;
       this.baseURL = this.currentPid.baseURI;
     },
     newsDataHandler (value) {
       this.newsData = value;
-      this.currentWd = this.currentPid.newsletterRoot + 'S' + this.newsData.week + '\\' + this.newsData.cmpid + '\\'
+      this.currentWd = this.currentPid.nlWorkingDir + 'S' + this.newsData.week + '\\' + this.newsData.cmpid + '\\'
     },
   },
 };
