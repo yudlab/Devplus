@@ -52,9 +52,11 @@ app.post('/submit-news',function(req,res){
     console.log("---")
     console.log("req.query: ", req.query)
     console.log("req.query.dir: ", req.query)
-    if(req.body){
-        console.log(JSON.stringify(req.body))
-        res.send(req.body)
+    if(req.body.data){
+        console.log(JSON.stringify(req.body.data))
+        console.log(req.body.data.newsData.currentPid.baseURL)
+        //console.dir(myJson.newsData.currentPid.id, {colors: true})
+        res.send(req.body.data.newsData.currentPid.id)
         return;
     }
 });

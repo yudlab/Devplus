@@ -148,10 +148,13 @@ export default {
                 // make sure you respect the same origin policy with this url:
                 // http://en.wikipedia.org/wiki/Same_origin_policy
                 url: 'http://127.0.0.1:3000/submit-news',
-                data: { 
-                    'folderData': this.cpd,
-                    'newsData': this.newsdata
-                },
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    data: {
+                        'folderData': this.cpd,
+                        'newsData': this.newsdata
+                    }
+                }),
                 success: function(msg){
                    console.log("From AJAX @subimt->res : ", msg);
                    
