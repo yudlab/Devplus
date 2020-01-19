@@ -59,17 +59,20 @@ app.post('/submit-news',function(req,res){
             if (!fs.existsSync(nlFolder+week)){
                 console.log("Creating Folder->", nlFolder+week)
                 fs.mkdirSync(nlFolder+week);
+            } else {
+                console.log("ALREADY EXIST.")
             }
             if (!fs.existsSync(req.body.data.folderData)){
                 console.log("Creating Folder->", req.body.data.folderData)
                 fs.mkdirSync(req.body.data.folderData);
                 res.send("202")
                 return;
+            } else {
+                res.send("ALREADY EXIST.")
             }
         } catch(e){
             console.log("An error occured while creating folder.")
             res.send(e)
-            return;
         }
         return;
     }

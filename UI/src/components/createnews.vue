@@ -7,7 +7,6 @@
                     <input id="cmpid"
                            v-model.lazy="cmpid"
                            v-on:change="newsDataChanged"
-                           v-bind:class="{ available: this.folderIsAvailable == 1 }"
                            name="cmpid"
                            type="text"
                            placeholder="cmpid">   
@@ -24,7 +23,11 @@
                     <input v-model="subject" name="subject" type="text" placeholder="subject">
                     <input v-model="ml" name="ml" type="text" placeholder="ML">
                 </div>
-                <div><a v-on:click="submit()" class="fas fa-angle-double-right next cur-unavailable"></a></div>
+                <div>
+                    <a v-on:click="submit()"
+                       id="submitnews"
+                       v-bind:class="{ disabled: folderAvailable === false }"
+                       class="fas fa-angle-double-right next"></a></div>
             </div>
             <hr>
             <div id="nldata" style="display: none">{{newsdata.currentPid.baseURL}}</div>
@@ -51,7 +54,7 @@ export default {
         tracking: '',
         lang: '',
         week: '',
-        folderIsAvailable: false,
+        folderAvailable: true,
         newsdata: this.nldata,
         cpd: '',
         };
@@ -59,7 +62,8 @@ export default {
     methods: {
         init () {
             console.clear()
-            console.log("called->f(x): init @ methods")
+            console.log("Welcome.")
+            console.log("I'd be happy for any of your suggestions ^^")
         },
         newsDataChanged () {
             this.tracking = this.cmpid;
@@ -143,6 +147,10 @@ export default {
         },
         submit (){
             if(this.newsdata!=='') {
+                if(sessionStorage.getItem('task-status')==='pending'){
+                    console.log("A task is already running...")
+                    return;
+                }
                 $.ajax({
                 type: 'POST',
                 // make sure you respect the same origin policy with this url:
@@ -157,18 +165,21 @@ export default {
                     }
                 }),
                 success: function(msg){
-                   console.log("From AJAX @subimt->res : ", msg);
-                   if(msg=="202"){
-                       $('#cmpid').removeClass('ok')
-                       $('#cmpid').addClass('created')
-                   } else {
-                       $('#cmpid').removeClass('ok')
-                       $('#cmpid').addClass('na')
-                   }
-                   
-                }})
-            }
-            else {
+                    console.log("From AJAX @subimt->res : ", msg);
+                    if(msg=="202"){
+                        $('#cmpid').removeClass('ok')
+                        $('#cmpid').addClass('created')
+                        return;
+                    } else {
+                        $('#cmpid').removeClass('ok')
+                        $('#cmpid').addClass('na')
+                        return;
+                    }
+                }
+            })
+            sessionStorage.setItem('task-status', 'pending')
+            $('#submitnews').addClass('disabled')
+            } else {
                 console.log("No path defined @ scanDir().")
             }
         },
@@ -176,7 +187,7 @@ export default {
     props: {
         nldata: {
             type: Object
-        }
+        },
     },
     watch: {
         cmpid: function (){
@@ -191,6 +202,7 @@ export default {
     },
     mounted(){
         this.init()
+        sessionStorage.setItem('task-status', 'undefined')
     }
 };
 </script>
@@ -267,6 +279,9 @@ export default {
                 .created {
                     border: 2px solid #2ecc71;
                 }
+            }
+            .disabled {
+                cursor: progress;
             }
         }
     }
