@@ -71,12 +71,14 @@ export default {
         newsDataChanged () {
             this.tracking = this.cmpid;
             var mycmpidarr = this.cmpid.split('_');
-                if(mycmpidarr.length==3){
+                if (mycmpidarr.length==3){
                 this.date = mycmpidarr[2];
-                }
-                if(mycmpidarr.length==4){
+                } else if (mycmpidarr.length==4){
                 this.date = mycmpidarr[3];
                 this.lang = mycmpidarr[2];
+                } else {
+                    console.log("Invalid date.")
+                    return;
                 }
             this.week = this.getWeek(this.date);
             this.$emit('newsDataChange', this.$data);
@@ -209,6 +211,7 @@ export default {
             console.log("Path-> ", path)
             this.scanDir(path)
             this.cpd = path;
+            sessionStorage.setItem('task-status', 'undefined')
         }
     },
     mounted(){
