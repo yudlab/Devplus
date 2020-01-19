@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div id="createnews" class="createnews">
+        <div id="createnews" class="createnews animated fadeIn delay-1s">
             <!--input v-model="cwd.path" v-on:change="scanDir(cwd.path)" name="path" type="text" placeholder="path"-->
             <div class="itm1">
                 <div class="primary">
@@ -27,11 +27,11 @@
                     <a v-on:click="submit()"
                        id="submitnews"
                        v-bind:class="{ disabled: folderAvailable === false }"
-                       class="fas fa-angle-double-right next"></a></div>
+                       class="fas fa-angle-double-right next"></a>
+                    <div id="projectStatus" class="animated rotateInUpRight delay-.5s"></div>   
+                </div>
             </div>
-            <hr>
             <div id="nldata" style="display: none">{{newsdata.currentPid.baseURL}}</div>
-            <hr>
             <h1 style="display:none;">{{$data}}</h1>
         </div>
     </div>
@@ -148,7 +148,8 @@ export default {
         submit (){
             if(this.newsdata!=='') {
                 if(sessionStorage.getItem('task-status')==='pending'){
-                    console.log("A task is already running...")
+                    $('#projectStatus').css('display', 'flex')
+                    $('#projectStatus').html("A task is already running...")
                     return;
                 }
                 $.ajax({
@@ -219,6 +220,7 @@ export default {
         height: 55px;
         background-color: #3498db;
         border-radius: 50%;
+        z-index: 1;
         cursor: pointer;
         cursor: url('/assets/cursors/help.cur'), pointer;
 
@@ -229,6 +231,24 @@ export default {
             transition: ease 0.5s;
             border: 1px solid #3498db;
         }
+    }
+    #projectStatus{
+        position: absolute;
+        top: -65px;
+        right: 12px;
+        padding: 9px 66px 10px 21px;
+        color: #34495e;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-family: 'brownprolight';
+        border: 1px solid #ecf0f1;
+        border-radius: 4px;
+        background-color: #ecf0f1;
+        z-index: 0;
+        border-bottom-left-radius: 21px;
+        border-top-left-radius: 21px;
+        transition: width ease 0.5s;
     }
     div {
         display: flex;
@@ -241,6 +261,10 @@ export default {
         flex-direction: column;
         justify-content: flex-start;
         position: relative;
+        border: 1px solid #ecf0f1;
+        background-color: #ecf0f1;
+        padding: 30px;
+        border-radius: 24px;
 
         .itm1 {
             width: 100%;
@@ -261,7 +285,7 @@ export default {
                 font-family: 'brownprolight';
                 font-size: 14px;
                 border: 2px solid #3498db;
-                padding-left: 10px;
+                padding-left: 15px;
                 height: 40px;
                 width: 250px;
                 margin-bottom: 5px;
@@ -270,6 +294,7 @@ export default {
                 position: relative;
             }
             .primary {
+                padding-right: 10px;
                 .ok {
                     border: 2px solid #f39c12;
                 }

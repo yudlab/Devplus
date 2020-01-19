@@ -9,6 +9,7 @@
   </div>
 </template>
 <style src="./assets/css/all.css"></style>
+<style src="./assets/css/animate.css"></style>
 <style lang="scss">
 @font-face { 
     font-family: 'integral'; 
