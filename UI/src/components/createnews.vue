@@ -110,27 +110,29 @@ export default {
                     'dir': dir
                 },
                 success: function(msg){
-                   console.log("Res from AJAX: ", msg);
-                   console.log("dir @ scanDir(dir): ", dir);
+                   console.log("Res from AJAX: ", msg)
+                   $('#projectStatus').html(msg)
+                   $('#projectStatus').css('display', 'flex')
+                   console.log("dir @ scanDir(dir): ", dir)
                    $('#cmpid-label').css('display', 'block')
                    switch(msg){
                        case '-4048':
                            console.log("No perm")
-                           sessionStorage.setItem("cpd", "403");
+                           sessionStorage.setItem("cpd", "403")
                            $('#cmpid').removeClass('ok')
                            $('#cmpid').addClass('na')
                            return 403
                            break
                        case '-4058':
                            console.log("Not found")
-                           sessionStorage.setItem("cpd", "404");
+                           sessionStorage.setItem("cpd", "404")
                            $('#cmpid').removeClass('na')
                            $('#cmpid').addClass('ok')
                            return 404
                            break
                        case '[]':
                            console.log("Empty")
-                           sessionStorage.setItem("cpd", "204");
+                           sessionStorage.setItem("cpd", "204")
                            $('#cmpid').removeClass('ok')
                            $('#cmpid').addClass('na')
                            return 204
@@ -171,7 +173,9 @@ export default {
                     }
                 }),
                 success: function(msg){
-                    console.log("From AJAX @subimt->res : ", msg);
+                    console.log("From AJAX @subimt->res : ", msg)
+                    $('#projectStatus').html(msg)
+                    $('#projectStatus').css('display', 'flex')
                     if(msg=="202"){
                         $('#cmpid').removeClass('ok')
                         $('#cmpid').addClass('created')
@@ -193,8 +197,8 @@ export default {
             setTimeout(function(){
                 $('#projectStatus').addClass('animated fadeOut delay-2s')
             }, 2000);
-            $('#projectStatus').css('display', 'none');
-            $('#projectStatus').html('');
+            $('#projectStatus').css('display', 'none')
+            $('#projectStatus').html('')
         },
     },
     props: {
@@ -210,7 +214,7 @@ export default {
             var path = this.newsdata.currentPid.nlWorkingDir + 'S' + this.week + '\\' + this.cmpid
             console.log("Path-> ", path)
             this.scanDir(path)
-            this.cpd = path;
+            this.cpd = path
             sessionStorage.setItem('task-status', 'undefined')
         }
     },

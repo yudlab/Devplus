@@ -60,18 +60,18 @@ app.post('/submit-news',function(req,res){
                 console.log("Creating Folder->", nlFolder+week)
                 fs.mkdirSync(nlFolder+week);
             } else {
-                console.log("ALREADY EXIST.")
+                console.log("ERR: Already exist.")
             }
             if (!fs.existsSync(req.body.data.folderData)){
                 console.log("Creating Folder->", req.body.data.folderData)
                 fs.mkdirSync(req.body.data.folderData);
-                res.send("202")
+                res.send("202: Accepted")
                 return;
             } else {
-                res.send("ALREADY EXIST.")
+                res.send("ERR: Already exist.")
             }
         } catch(e){
-            console.log("An error occured while creating folder.")
+            console.log("ERR: CREATE")
             res.send(e)
         }
         return;
@@ -80,7 +80,7 @@ app.post('/submit-news',function(req,res){
 
 app.post('/open',function(req,res){
     if(!req.body.data){
-        res.sendStatus(400)
+        res.sendStatus(500)
         return;
     }
     open(req.body.data.cwd, {app: 'explorer'});
