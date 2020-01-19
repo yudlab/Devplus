@@ -28,7 +28,10 @@
                        id="submitnews"
                        v-bind:class="{ disabled: folderAvailable === false }"
                        class="fas fa-angle-double-right next"></a>
-                    <div id="projectStatus" class="animated rotateInUpRight delay-.5s"></div>   
+                    <div
+                        id="projectStatus"
+                        class="animated rotateInUpRight delay-.5s"
+                        @click="clearMsg"></div>
                 </div>
             </div>
             <div id="nldata" style="display: none">{{newsdata.currentPid.baseURL}}</div>
@@ -179,10 +182,17 @@ export default {
                 }
             })
             sessionStorage.setItem('task-status', 'pending')
-            $('#submitnews').addClass('disabled')
+            $('#submitnews').addClass('disabled animated infinite pulse')
             } else {
                 console.log("No path defined @ scanDir().")
             }
+        },
+        clearMsg (){
+            setTimeout(function(){
+                $('#projectStatus').addClass('animated fadeOut delay-2s')
+            }, 2000);
+            $('#projectStatus').css('display', 'none');
+            $('#projectStatus').html('');
         },
     },
     props: {
@@ -215,7 +225,8 @@ export default {
         justify-content: center;
         font-size: 30px;
         position: absolute;
-        top: -70px;
+        top: -18px;
+        right: -27px;
         width: 55px;
         height: 55px;
         background-color: #3498db;
@@ -234,7 +245,7 @@ export default {
     }
     #projectStatus{
         position: absolute;
-        top: -65px;
+        top: -75px;
         right: 12px;
         padding: 9px 66px 10px 21px;
         color: #34495e;
@@ -249,6 +260,10 @@ export default {
         border-bottom-left-radius: 21px;
         border-top-left-radius: 21px;
         transition: width ease 0.5s;
+
+        &:hover {
+            cursor: no-drop;
+        }
     }
     div {
         display: flex;
