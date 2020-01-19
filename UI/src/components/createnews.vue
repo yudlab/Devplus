@@ -29,7 +29,7 @@
             <hr>
             <div id="nldata" style="display: none">{{newsdata.currentPid.baseURL}}</div>
             <hr>
-            <h1 style="display: none">{{$data}}</h1>
+            <h1 style="display:none;">{{$data}}</h1>
         </div>
     </div>
 </template>
@@ -58,8 +58,8 @@ export default {
     },
     methods: {
         init () {
-            console.log("called->f(x): init @ methods")
             console.clear()
+            console.log("called->f(x): init @ methods")
         },
         newsDataChanged () {
             this.tracking = this.cmpid;
@@ -152,11 +152,19 @@ export default {
                 data: JSON.stringify({
                     data: {
                         'folderData': this.cpd,
-                        'newsData': this.newsdata
+                        'newsData': this.newsdata,
+                        'week': this.week,
                     }
                 }),
                 success: function(msg){
                    console.log("From AJAX @subimt->res : ", msg);
+                   if(msg=="202"){
+                       $('#cmpid').removeClass('ok')
+                       $('#cmpid').addClass('created')
+                   } else {
+                       $('#cmpid').removeClass('ok')
+                       $('#cmpid').addClass('na')
+                   }
                    
                 }})
             }
@@ -186,6 +194,7 @@ export default {
     }
 };
 </script>
+
 <style lang="scss" scoped>
     .next {
         display: flex;
@@ -237,8 +246,10 @@ export default {
             }
 
             input {
-                border: 1px solid #2c3e50;
-                padding-left: 5px;
+                font-family: 'brownprolight';
+                font-size: 14px;
+                border: 2px solid #3498db;
+                padding-left: 10px;
                 height: 40px;
                 width: 250px;
                 margin-bottom: 5px;
@@ -248,10 +259,13 @@ export default {
             }
             .primary {
                 .ok {
-                    border: 2px solid #2ecc71;
+                    border: 2px solid #f39c12;
                 }
                 .na {
                     border: 2px solid #e74c3c;
+                }
+                .created {
+                    border: 2px solid #2ecc71;
                 }
             }
         }

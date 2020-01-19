@@ -5,7 +5,9 @@
                 :nldata="nldata"
                  v-if="currentPid"
                  @newsDataChange="newsDataHandler"/>
-    <div class="path" v-if="currentPid && newsData">Will be saved in: {{currentWd}}</div>
+    <a class="path"
+         v-if="currentPid && newsData"
+         @click="openExplorer">Will be saved in: {{currentWd}}</a>
   </div>
 </template>
 
@@ -44,6 +46,29 @@ export default {
       this.newsData = value;
       this.currentWd = this.currentPid.nlWorkingDir + 'S' + this.newsData.week + '\\' + this.newsData.cmpid + '\\'
     },
+    openExplorer () {
+      $.ajax({
+        type: 'POST',
+        // make sure you respect the same origin policy with this url:
+        // http://en.wikipedia.org/wiki/Same_origin_policy
+        url: 'http://127.0.0.1:3000/open',
+        contentType: 'application/json',
+        data: JSON.stringify({
+          data: {
+              'cwd': this.currentWd,
+          }
+        }),
+        success: function(msg){
+          console.log("From AJAX @subimt->res : ", msg);
+          if(msg=="202"){
+              $('#cmpid').removeClass('ok')
+              $('#cmpid').addClass('created')
+          } else {
+              $('#cmpid').removeClass('ok')
+              $('#cmpid').addClass('na')
+          }
+      }})
+    }
   },
 };
 </script>
@@ -76,7 +101,9 @@ export default {
         position: absolute;
         top: 18px;
         right: 20%;
-        color: #FFFFFF;
+        color: #FFFFFF !important;
+        font-family: 'brownprolight';
+        cursor: pointer;
       }
     }
 

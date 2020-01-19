@@ -10,8 +10,17 @@
 </template>
 <style src="./assets/css/all.css"></style>
 <style lang="scss">
-html {
+@font-face { 
+    font-family: 'integral'; 
+	src: url('./assets/webfonts/integralCF.woff'); }
+@font-face { 
+    font-family: 'brownprolight'; 
+    src: url('./assets/webfonts/Brown Pro Light.otf'); } 
+</style>
+<style lang="scss">
+html, body {
   height: 100%;
+  font-family: 'brownprolight' !important;
 }
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -38,6 +47,8 @@ html {
     font-weight: bold;
     color: #FFFFFF;
     padding: 0 15px;
+    font-family: integral;
+    letter-spacing: 1px;
 
     &.router-link-exact-active {
       color: #42b983;
