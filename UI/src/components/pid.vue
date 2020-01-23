@@ -19,29 +19,29 @@ export default {
   name: 'pids',
   data() {
     return {
-      pids: "need fetch...",
-      a: "need fetch...",
-      obj: {}
+      pids: 'need fetch...',
+      a: 'need fetch...',
+      obj: {},
     };
   },
-  created: function() {
+  created() {
     axios
       .get('http://127.0.0.1:3000/pids')
-      .then(res => {
+      .then((res) => {
         this.pids = res.data;
-      })
-  },  
+      });
+  },
   methods: {
-    add () {
+    add() {
       axios
         .post('http://127.0.0.1:3000/getpaths', this.obj)
-        .then(res => {
+        .then((res) => {
           this.pids = res.data;
-        })
+        });
     },
-    pidChanged () {
+    pidChanged() {
       this.$emit('pidChanged', this.a);
-    }
+    },
   },
 };
 </script>

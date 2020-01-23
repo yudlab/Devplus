@@ -1,36 +1,35 @@
-console.clear();
-const express = require('express');
-const bodyParser = require('body-parser');
-const app = express();
-var cors = require('cors');
-const port = 3000;
-var pids = require('./sites');
-var fs = require('fs');
-const open = require('open');
-//app.use(bodyParser.urlencoded({ extended: true }));
+console.clear()
+const app = require('express')()
+var server = require('http').Server(app)
+var io = require('socket.io')(server)
+const bodyParser = require('body-parser')
+var cors = require('cors')
+const port = 3000
+var pids = require('./sites')
+var fs = require('fs')
+const open = require('open')
+//app.use(bodyParser.urlencoded({ extended: true }))
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
-var readDirectory = require('./includes/dir-fetch/fs-fetch');
+var readDirectory = require('./includes/dir-fetch/fs-fetch')
 
 
+server.listen(port);
+console.log("Started on port: ", port)
 // Add headers
 app.use(function (req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Content-Security-Policy', 'default-src *');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:8080, http://localhost:3000, http://127.0.0.1:3000, http://127.0.0.1:8080')
+    res.setHeader('Content-Security-Policy', 'default-src *')
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST')
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+    res.setHeader('Access-Control-Allow-Credentials', false)
     next()
 })
 app.use(cors())
-
-
-app.listen(port, () => console.log(`Started on port ${port}!`));
-
-app.get('/pids', (req, res) => res.send(pids));
-
+app.get('/', (req, res) => res.send(""))
+app.get('/pids', (req, res) => res.send(pids))
 app.post('/getpath',function(req,res){
     //console.log("req.body: ", req.body)
     //console.log("req.body.dir: ", req.body.dir)
@@ -54,19 +53,20 @@ app.post('/submit-news',function(req,res){
         //console.log(req.body.data.newsData.currentPid.nlWorkingDir)
         //console.dir(myJson.newsData.currentPid.id, {colors: true})
         try {
-            var week = 'S'+req.body.data.week;
-            var nlFolder = req.body.data.newsData.currentPid.nlWorkingDir;
+            if(req.body.data.week==''){res.send("500: Err-> Incorrect date.");return;}
+            var week = 'S'+req.body.data.week
+            var nlFolder = req.body.data.newsData.currentPid.nlWorkingDir
             if (!fs.existsSync(nlFolder+week)){
                 console.log("Creating Folder->", nlFolder+week)
-                fs.mkdirSync(nlFolder+week);
+                fs.mkdirSync(nlFolder+week)
             } else {
                 console.log("ERR: Already exist.")
             }
             if (!fs.existsSync(req.body.data.folderData)){
                 console.log("Creating Folder->", req.body.data.folderData)
-                fs.mkdirSync(req.body.data.folderData);
+                fs.mkdirSync(req.body.data.folderData)
                 res.send("202: Accepted")
-                return;
+                return
             } else {
                 res.send("ERR: Already exist.")
             }
@@ -74,7 +74,33 @@ app.post('/submit-news',function(req,res){
             console.log("ERR: CREATE")
             res.send(e)
         }
-        return;
+        return
+    }
+});
+
+app.post('/read-exports',function(req,res){
+    if(req.body.data.path){
+        //console.log(JSON.stringify(req.body.data))
+        //console.log(req.body.data.newsData.currentPid.nlWorkingDir)
+        //console.dir(myJson.newsData.currentPid.id, {colors: true})
+        try {
+            if(fs.existsSync(req.body.data.path)){
+                fs.readFile(req.body.data.path, function(err, data){
+                    if(err){
+                        console.log(err)
+                        res.send(err)
+                    }
+                    res.send(data)
+                })
+            } else {
+                res.send(404)
+            }
+        } catch(err){
+            console.log(err)
+            res.send(err)
+        }
+    } else {
+        res.send("Path not valid. -> ", path)
     }
 });
 

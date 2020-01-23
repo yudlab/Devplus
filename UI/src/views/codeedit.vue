@@ -12,29 +12,30 @@ import 'codemirror/mode/css/css.js';
 import 'codemirror/theme/lucario.css';
 import { codemirror } from 'vue-codemirror';
 import 'codemirror/lib/codemirror.css';
+
 export default {
-  
-  name: "codeedit",
-  data () {
+
+  name: 'codeedit',
+  data() {
     return {
-      code: '',
+      code: window.export,
       cmOptions: {
         tabSize: 4,
         theme: 'lucario',
         lineNumbers: true,
         line: true,
-      }
-    }
+      },
+    };
   },
   components: {
-    codemirror
+    codemirror,
   },
   methods: {
-    loadCode(){
+    loadCode() {
 
-    }
+    },
   },
-}
+};
 </script>
 <style lang="scss">
   html, body {
@@ -51,5 +52,5 @@ export default {
       }
     }
   }
-  
+
 </style>

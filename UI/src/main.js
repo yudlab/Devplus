@@ -2,14 +2,21 @@ import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
 import store from './store';
-import axios from 'axios'
-import VueAxios from 'vue-axios'
-
-
-Vue.use(VueAxios, axios,)
-Vue.config.productionTip = false;
 
 window.$ = window.jQuery = require('jquery');
+
+Vue.config.productionTip = false;
+
+/*Vue.use(new VueSocketIO({
+  debug: true,
+  connection: 'http://localhost:3000',
+  vuex: {
+    store,
+    actionPrefix: 'SOCKET_',
+    mutationPrefix: 'SOCKET_',
+  },
+  options: { path: '/' }, // Optional options
+}));*/
 
 window.vue = new Vue({
   router,

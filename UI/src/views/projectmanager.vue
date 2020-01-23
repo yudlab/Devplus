@@ -27,8 +27,8 @@ export default {
       newsData: '',
       baseURL: '',
       nldata: {
-        "nldata": "",
-        "currentWd": "",
+        nldata: '',
+        currentWd: '',
       },
       currentWd: '',
     };
@@ -38,15 +38,15 @@ export default {
     createnews,
   },
   methods: {
-    pidChangedHandler (value) {
+    pidChangedHandler(value) {
       this.currentPid = this.nldata.currentPid = value;
       this.baseURL = this.currentPid.baseURI;
     },
-    newsDataHandler (value) {
+    newsDataHandler(value) {
       this.newsData = value;
-      this.currentWd = this.currentPid.nlWorkingDir + 'S' + this.newsData.week + '\\' + this.newsData.cmpid + '\\'
+      this.currentWd = `${this.currentPid.nlWorkingDir}S${this.newsData.week}\\${this.newsData.cmpid}\\`;
     },
-    openExplorer () {
+    openExplorer() {
       $.ajax({
         type: 'POST',
         // make sure you respect the same origin policy with this url:
@@ -55,20 +55,21 @@ export default {
         contentType: 'application/json',
         data: JSON.stringify({
           data: {
-              'cwd': this.currentWd,
-          }
+            cwd: this.currentWd,
+          },
         }),
-        success: function(msg){
-          console.log("From AJAX @subimt->res : ", msg);
-          if(msg=="202"){
-              $('#cmpid').removeClass('ok')
-              $('#cmpid').addClass('created')
+        success(msg) {
+          console.log('From AJAX @subimt->res : ', msg);
+          if (msg == '202') {
+            $('#cmpid').removeClass('ok');
+            $('#cmpid').addClass('created');
           } else {
-              $('#cmpid').removeClass('ok')
-              $('#cmpid').addClass('na')
+            $('#cmpid').removeClass('ok');
+            $('#cmpid').addClass('na');
           }
-      }})
-    }
+        },
+      });
+    },
   },
 };
 </script>

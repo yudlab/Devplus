@@ -9,7 +9,7 @@
                            v-on:change="newsDataChanged"
                            name="cmpid"
                            type="text"
-                           placeholder="cmpid">   
+                           placeholder="cmpid">
                     <div class="secondary" v-if="cmpid.length > 7">
                         <input v-model="tracking" name="tracking" type="text" placeholder="tracking">
                         <input v-model="date" name="date" type="text" placeholder="date">
@@ -24,7 +24,7 @@
                     <input v-model="ml" name="ml" type="text" placeholder="ML">
                 </div>
                 <div>
-                    <a v-on:click="submit()"
+                    <a @click="submit()"
                        id="submitnews"
                        v-bind:class="{ disabled: folderAvailable === false }"
                        class="fas fa-angle-double-right next"></a>
@@ -35,194 +35,267 @@
                 </div>
             </div>
             <div id="nldata" style="display: none">{{newsdata.currentPid.baseURL}}</div>
-            <h1 style="display:none;">{{$data}}</h1>
+            <h1 style="display:none;font-size: 14px;">{{$data}}</h1>
         </div>
     </div>
 </template>
-
 
 
 <script>
 // import axios from 'axios';
 // import qs from 'qs';
 export default {
-    data() {
-        return {
-        cmpid: 'nl_test_20190101',
-        date: '',
-        preheader_text: '',
-        preheader_link: "",
-        subject: '',
-        ml: '',
-        tracking: '',
-        lang: '',
-        week: '',
-        folderAvailable: true,
-        newsdata: this.nldata,
-        cpd: '',
-        };
+  data() {
+    return {
+      cmpid: 'nl_test_20190101',
+      date: '',
+      preheader_text: '',
+      preheader_link: '',
+      subject: '',
+      ml: '',
+      tracking: '',
+      lang: '',
+      week: '',
+      folderAvailable: true,
+      newsdata: this.nldata,
+      cpd: '',
+    };
+  },
+  methods: {
+    init() {
+      console.clear()
+      this.msg('Hello 🎉🎉🎉')
+      console.log("I'd be happy for any of your suggestions ^^")
     },
-    methods: {
-        init () {
-            console.clear()
-            console.log("Welcome.")
-            console.log("I'd be happy for any of your suggestions ^^")
-        },
-        newsDataChanged () {
-            this.tracking = this.cmpid;
-            var mycmpidarr = this.cmpid.split('_');
-                if (mycmpidarr.length==3){
-                this.date = mycmpidarr[2];
-                } else if (mycmpidarr.length==4){
-                this.date = mycmpidarr[3];
-                this.lang = mycmpidarr[2];
-                } else {
-                    console.log("Invalid date.")
-                    return;
-                }
-            this.week = this.getWeek(this.date);
-            this.$emit('newsDataChange', this.$data);
-        },
-        getWeek (rawdate) {
-            if (rawdate.length == '8') {
-            var year = parseInt(rawdate.slice(0, 4));
-            var month = parseInt(rawdate.slice(4, 6));
-            var date = parseInt(rawdate.slice(6, 8));
-            var thatDay = new Date(year, month-1, date);
-            var dateReset = new Date(thatDay.getFullYear(), 0, 1);
-            var week = Math.ceil((((thatDay - dateReset) / 86400000) + dateReset.getDay() + 1) / 7);
-                if(week<10){
-                    return '0' + week;
-                } else {
-                    return week;
-                }
-            }
-            return new Error("Need to be in the format: YYYYMMDD !");
-        },
-        scanDir (dir) {
-            if(dir) {
-                $.ajax({
-                type: 'POST',
-                // make sure you respect the same origin policy with this url:
-                // http://en.wikipedia.org/wiki/Same_origin_policy
-                url: 'http://127.0.0.1:3000/getpath',
-                data: { 
-                    'dir': dir
-                },
-                success: function(msg){
-                   console.log("Res from AJAX: ", msg)
-                   $('#projectStatus').html(msg)
-                   $('#projectStatus').css('display', 'flex')
-                   console.log("dir @ scanDir(dir): ", dir)
-                   $('#cmpid-label').css('display', 'block')
-                   switch(msg){
-                       case '-4048':
-                           console.log("No perm")
-                           sessionStorage.setItem("cpd", "403")
-                           $('#cmpid').removeClass('ok')
-                           $('#cmpid').addClass('na')
-                           return 403
-                           break
-                       case '-4058':
-                           console.log("Not found")
-                           sessionStorage.setItem("cpd", "404")
-                           $('#cmpid').removeClass('na')
-                           $('#cmpid').addClass('ok')
-                           return 404
-                           break
-                       case '[]':
-                           console.log("Empty")
-                           sessionStorage.setItem("cpd", "204")
-                           $('#cmpid').removeClass('ok')
-                           $('#cmpid').addClass('na')
-                           return 204
-                           break
-                       default:
-                           console.log(msg)
-                           $('#cmpid-label').css('color', '#e74c3c')
-                           $('#output').html(msg)
-                           sessionStorage.setItem("cpd", msg);
-                           $('#cmpid').removeClass('ok')
-                           $('#cmpid').addClass('na')
-                           return JSON.stringify(msg)
-                    }
-                }})
-            }
-            else {
-                console.log("No path defined @ scanDir().")
-            }
-        },
-        submit (){
-            if(this.newsdata!=='') {
-                if(sessionStorage.getItem('task-status')==='pending'){
-                    $('#projectStatus').css('display', 'flex')
-                    $('#projectStatus').html("A task is already running...")
-                    return;
-                }
-                $.ajax({
-                type: 'POST',
-                // make sure you respect the same origin policy with this url:
-                // http://en.wikipedia.org/wiki/Same_origin_policy
-                url: 'http://127.0.0.1:3000/submit-news',
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    data: {
-                        'folderData': this.cpd,
-                        'newsData': this.newsdata,
-                        'week': this.week,
-                    }
-                }),
-                success: function(msg){
-                    console.log("From AJAX @subimt->res : ", msg)
-                    $('#projectStatus').html(msg)
-                    $('#projectStatus').css('display', 'flex')
-                    if(msg=="202"){
-                        $('#cmpid').removeClass('ok')
-                        $('#cmpid').addClass('created')
-                        return;
-                    } else {
-                        $('#cmpid').removeClass('ok')
-                        $('#cmpid').addClass('na')
-                        return;
-                    }
-                }
-            })
-            sessionStorage.setItem('task-status', 'pending')
-            $('#submitnews').addClass('disabled animated infinite pulse')
-            } else {
-                console.log("No path defined @ scanDir().")
-            }
-        },
-        clearMsg (){
-            setTimeout(function(){
-                $('#projectStatus').addClass('animated fadeOut delay-2s')
-            }, 2000);
-            $('#projectStatus').css('display', 'none')
-            $('#projectStatus').html('')
-        },
+    newsDataChanged() {
+      this.tracking = this.cmpid
+      const mycmpidarr = this.cmpid.split('_')
+      if (mycmpidarr.length == 3) {
+        this.date = mycmpidarr[2]
+      } else if (mycmpidarr.length == 4) {
+        this.date = mycmpidarr[3]
+        this.lang = mycmpidarr[2]
+      } else {
+        console.log('Invalid date.')
+        return
+      }
+      this.week = this.getWeek(this.date)
+      this.$emit('newsDataChange', this.$data)
     },
-    props: {
-        nldata: {
-            type: Object
-        },
-    },
-    watch: {
-        cmpid: function (){
-            console.log("cmpid changed.")
-            this.folderIsAvailable = false
-            this.preheader_link = this.newsdata.currentPid.baseURL
-            var path = this.newsdata.currentPid.nlWorkingDir + 'S' + this.week + '\\' + this.cmpid
-            console.log("Path-> ", path)
-            this.scanDir(path)
-            this.cpd = path
-            sessionStorage.setItem('task-status', 'undefined')
+    getWeek(rawdate) {
+      rawdate = rawdate
+      if ( rawdate.length>4 && rawdate.length == '8' ) {
+        const year = parseInt(rawdate.slice(0, 4))
+        const month = parseInt(rawdate.slice(4, 6))
+        const date = parseInt(rawdate.slice(6, 8))
+        const thatDay = new Date(year, month - 1, date)
+        const dateReset = new Date(thatDay.getFullYear(), 0, 1)
+        const week = Math.ceil((((thatDay - dateReset) / 86400000) + dateReset.getDay() + 1) / 7)
+        if (week < 10) {
+          return `0${week}`
         }
+        return week
+      }
+      this.msg("Date is invalid. Actual date was suggested instead.")
+      return this.getDate()
     },
-    mounted(){
-        this.init()
-        sessionStorage.setItem('task-status', 'undefined')
+    msg(e){
+        if($('#projectStatus').css('display')=='none'){$('#projectStatus').css('display', 'flex')}
+        $('#projectStatus').html(e)
+    },
+    sanitize(e) {
+        var regexp = /(<|>|:|"|\/|\\|\||\?|\*| |')/gi;
+        return e.replace(regexp, "")
+    },
+    scanDir(dir) {
+      if (dir) {
+        $.ajax({
+          type: 'POST',
+          // make sure you respect the same origin policy with this url:
+          // http://en.wikipedia.org/wiki/Same_origin_policy
+          url: 'http://127.0.0.1:3000/getpath',
+          data: {
+            dir,
+          },
+          success(msg) {
+            console.log('Res from AJAX: ', msg)
+            $('#projectStatus').html(msg)
+            $('#projectStatus').css('display', 'flex')
+            console.log('dir @ scanDir(dir): ', dir)
+            $('#cmpid-label').css('display', 'block')
+            switch (msg) {
+              case '-4048':
+                console.log('No perm')
+                sessionStorage.setItem('cpd', '403')
+                $('#cmpid').removeClass('ok')
+                $('#cmpid').addClass('na')
+                return 403
+                break
+              case '-4058':
+                console.log('Not found')
+                sessionStorage.setItem('cpd', '404')
+                $('#cmpid').removeClass('na')
+                $('#cmpid').addClass('ok')
+                return 404
+                break
+              case '[]':
+                console.log('Empty')
+                sessionStorage.setItem('cpd', '204')
+                $('#cmpid').removeClass('ok')
+                $('#cmpid').addClass('na')
+                return 204
+                break
+              default:
+                console.log(msg)
+                $('#cmpid-label').css('color', '#e74c3c')
+                $('#output').html(msg)
+                sessionStorage.setItem('cpd', msg)
+                $('#cmpid').removeClass('ok')
+                $('#cmpid').addClass('na')
+                return JSON.stringify(msg)
+            }
+          },
+        })
+      } else {
+        this.msg('No path defined @ scanDir().')
+      }
+    },
+    submit() {
+      if (this.newsdata !== '') {
+        if (sessionStorage.getItem('task-status') === 'pending') {
+          this.fetchExports()
+          this.msg('A task is already running...')
+          setTimeout(() => {
+            this.msg(sessionStorage.getItem('task-msg'))
+          }, 1500)
+          return
+        }
+        $.ajax({
+          type: 'POST',
+          // make sure you respect the same origin policy with this url:
+          // http://en.wikipedia.org/wiki/Same_origin_policy
+          url: 'http://127.0.0.1:3000/submit-news',
+          contentType: 'application/json',
+          data: JSON.stringify({
+            data: {
+              folderData: this.cpd,
+              newsData: this.newsdata,
+              week: this.week,
+            },
+          }),
+          success(msg) {
+            console.log('From AJAX @subimt->res : ', msg)
+            setTimeout(() => {
+              $('#projectStatus').html(msg)
+            }, 2000)
+            $('#projectStatus').css('display', 'flex')
+            if (msg == '202') {
+              $('#cmpid').removeClass('ok')
+              $('#cmpid').addClass('created')
+            } else {
+              $('#cmpid').removeClass('ok')
+              $('#cmpid').addClass('na')
+            }
+          },
+        })
+        sessionStorage.setItem('task-status', 'pending')
+        $('#projectStatus').html('Waiting for exports...')
+        $('#submitnews').addClass('disabled animated infinite pulse')
+        this.fetchExports()
+      } else {
+        console.log('No path defined @ scanDir().')
+      }
+    },
+    clearMsg() {
+      setTimeout(() => {
+        $('#projectStatus').addClass('animated fadeOut delay-2s')
+      }, 2000)
+      $('#projectStatus').css('display', 'none')
+      $('#projectStatus').html('')
+    },
+    fetchExports() {
+      $.ajax({
+        type: 'POST',
+        // make sure you respect the same origin policy with this url:
+        // http://en.wikipedia.org/wiki/Same_origin_policy
+        url: 'http://127.0.0.1:3000/read-exports',
+        contentType: 'application/json',
+        data: JSON.stringify({
+          data: {
+            path: `${this.cpd}\\visu.html`,
+          },
+        }),
+        success(msg) {
+          console.log(msg)
+          var parser = new DOMParser()
+          var doc = parser.parseFromString( msg, "text/html" )
+          $(doc).find("td").attr('align','center')
+          $(doc).find("td").attr('valign','bottom')
+          var imgs = doc.querySelectorAll('img')
+          imgs.forEach(element => {
+            $(element).attr('border', '0')
+            $(element).css('vertical-align', 'bottom')
+          })
+          var hrefs = doc.querySelectorAll('a')
+          hrefs.forEach(a => {
+            $(a).attr('target', '_blank')
+            var titles = a.querySelector('img')
+            var title = $(titles).attr('alt')
+            $(a).attr('title', title)
+          })
+          window.export = doc.querySelector("table").outerHTML
+        },
+      })
+    },
+    /*emit() {
+      this.$socket.emit('test', 'data')
+    },*/
+    getDate(){
+        var today = new Date()
+        var dd = today.getDate()
+        var mm = today.getMonth()+1 
+        var yyyy = today.getFullYear()
+        if(dd<10) {
+            dd='0'+dd
+        }
+        if(mm<10) {
+            mm='0'+mm
+        } 
+        return dd+mm+yyyy
     }
-};
+  },
+  /*sockets: {
+    connect() {
+      console.log('socket connected')
+    },
+    customEmit(data) {
+      console.log('this method was fired by the socket server. eg: io.emit("customEmit", data)')
+    },
+  },*/
+  props: {
+    nldata: {
+      type: Object,
+    },
+  },
+  watch: {
+    cmpid() {
+      let _this = this
+      _this.cmpid = _this.sanitize(_this.cmpid)
+      console.log(this.cmpid)
+      this.folderIsAvailable = false
+      this.preheader_link = this.newsdata.currentPid.baseURL
+      const path = `${this.newsdata.currentPid.nlWorkingDir}S${this.week+'\\'+this.cmpid}`
+      console.log('Path-> ', path)
+      this.scanDir(path)
+      this.cpd = path
+      sessionStorage.setItem('task-status', 'undefined')
+    },
+  },
+  mounted() {
+    this.init()
+    sessionStorage.setItem('task-status', 'undefined')
+  },
+}
 </script>
 
 <style lang="scss" scoped>
