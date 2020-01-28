@@ -35,7 +35,7 @@
                 </div>
             </div>
             <div id="nldata" style="display: none">{{newsdata.currentPid.baseURL}}</div>
-            <h1 style="display:none;font-size: 14px;">{{$data}}</h1>
+            <h1 style="font-size: 14px;">{{$data}}</h1>
         </div>
     </div>
 </template>
@@ -214,6 +214,7 @@ export default {
       $('#projectStatus').html('')
     },
     fetchExports() {
+      var _this = this
       $.ajax({
         type: 'POST',
         // make sure you respect the same origin policy with this url:
@@ -226,24 +227,12 @@ export default {
           },
         }),
         success(msg) {
+          sessionStorage.setItem('htmlExportRaw', msg)
           console.log(msg)
-          var parser = new DOMParser()
-          var doc = parser.parseFromString( msg, "text/html" )
-          $(doc).find("td").attr('align','center')
-          $(doc).find("td").attr('valign','bottom')
-          var imgs = doc.querySelectorAll('img')
-          imgs.forEach(element => {
-            $(element).attr('border', '0')
-            $(element).css('vertical-align', 'bottom')
-          })
-          var hrefs = doc.querySelectorAll('a')
-          hrefs.forEach(a => {
-            $(a).attr('target', '_blank')
-            var titles = a.querySelector('img')
-            var title = $(titles).attr('alt')
-            $(a).attr('title', title)
-          })
-          window.export = doc.querySelector("table").outerHTML
+          var exports = _this.cleanNews(msg)
+          window.export = exports
+          sessionStorage.setItem('htmlExport', exports)
+          _this.msg('Editor loaded.')
         },
       })
     },
@@ -262,6 +251,48 @@ export default {
             mm='0'+mm
         } 
         return dd+mm+yyyy
+    },
+    cleanNews(e){
+      var parser = new DOMParser()
+      var doc = parser.parseFromString( e, "text/html" )
+      var tbl = doc.querySelector('table')
+      $(doc).find("td").attr('valign','bottom')
+      $(doc).find("td").attr('align','center')
+      $(doc).find("td").removeAttr('colspan')
+      $(doc).find("td").removeAttr('rowspan')
+      var imgs = doc.querySelectorAll('img')
+      imgs.forEach(element => {
+        $(element).css('vertical-align', 'bottom')
+        $(element).attr('border', '0')
+      })
+      var hrefs = doc.querySelectorAll('a')
+      hrefs.forEach(a => {
+        var titles = a.querySelector('img')
+        var title = $(titles).attr('alt')
+        $(a).attr('title', title)
+        $(a).attr('target', '_blank')
+        var thislink = $(a).attr('href')
+        thislink = thislink+'?tracking=blablabli&test=ok'
+        $(a).attr('href', thislink)
+      })
+      var html = doc.querySelector("table").outerHTML
+      html = html.replace(/<tbody>|<\/tbody>/, "")
+      return this.escapeHtml(html)
+    },
+    escapeHtml(e) {
+      var entityMap = {
+        '&amp;': '&',
+        '&lt;': '<',
+        '&gt;': '>',
+        '&quot;': '"',
+        "&#39;": '\'',
+        '&#x2F;': '/',
+        '&#x60;': '`',
+        '&#x3D;': '='
+      }
+      return String(e).replace(/&amp;|&lt;|&gt;|&quot;|&#39;|&#x2F;|&#x60;|&#x3D;/g, function (s) {
+        return entityMap[s];
+      })
     }
   },
   /*sockets: {
@@ -288,6 +319,7 @@ export default {
       console.log('Path-> ', path)
       this.scanDir(path)
       this.cpd = path
+      window.cwd = path
       sessionStorage.setItem('task-status', 'undefined')
     },
   },

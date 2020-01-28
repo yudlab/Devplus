@@ -1,8 +1,12 @@
 <template>
-  <codemirror
-    id="code-container"
-    v-model="code"
-    :options="cmOptions"></codemirror>
+  <div class="code">
+    <explorer id="explorer"></explorer>
+    <codemirror
+      id="code-container"
+      v-model="code"
+      :options="cmOptions">
+    </codemirror>
+  </div>
 </template>
 
 <script>
@@ -12,9 +16,10 @@ import 'codemirror/mode/css/css.js';
 import 'codemirror/theme/lucario.css';
 import { codemirror } from 'vue-codemirror';
 import 'codemirror/lib/codemirror.css';
+import 'codemirror/theme/lucario.css';
+import explorer from '@/components/explorer.vue';
 
 export default {
-
   name: 'codeedit',
   data() {
     return {
@@ -24,11 +29,16 @@ export default {
         theme: 'lucario',
         lineNumbers: true,
         line: true,
+        smartIndent: true,
+        lineWrapping: true,
+        scrollbarStyle: null
       },
+      cwd: window.cwd
     };
   },
   components: {
     codemirror,
+    explorer
   },
   methods: {
     loadCode() {
@@ -37,20 +47,27 @@ export default {
   },
 };
 </script>
-<style lang="scss">
-  html, body {
-    height: 100% !important;
-  }
-  #app {
-    height: 100%;
-
-    #code-container {
+<style lang="scss"> 
+#app {
+  .code {
       height: 100%;
+      #explorer {
+        height: 100%;
+        width: 60%;
+        position: absolute;
+        top: 0;
+        right: 0;
+        color: white;
+        z-index: 99;
+      }
+      #code-container {
+        position: relative;
+        height: 100%;
 
-      .CodeMirror {
-        height: 100% !important;
+        .CodeMirror {
+          height: 100% !important;
+        }
       }
     }
-  }
-
+}
 </style>

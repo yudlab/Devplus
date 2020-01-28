@@ -29,7 +29,7 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
   position: relative;
-  height: 100%;
+  height: 90%;
   width: 100%;
 }
 
@@ -40,7 +40,7 @@ html, body {
   justify-content: flex-start;
   background-color: #34495e;
   width: 100%;
-  height: 60px;
+  height: 10%;
   position: relative;
 
 
