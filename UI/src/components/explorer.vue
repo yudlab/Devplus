@@ -8,27 +8,18 @@
             <div class="explorer_contents">
                 <div class="file-man-bar">
                     <i @click="explorerBack" class="fas fa-angle-left"></i>
-                    <i @click="explorerReload" class="fas fa-redo"></i>
+                    <i @click="scanDir(navAddress)" class="fas fa-redo"></i>
                     <input v-model="navAddress"
                            class="navAddress"
                            type="text" >
                 </div>
-                <div class="explorer-container">
-                    <div class="box file"><i class="fas fa-file"></i>filewdqwwdwdwefef</div>
-                    <div class="box folder"><i class="fas fa-folder"></i>folderadwdwedede</div>
-                    <div class="box file"><i class="fas fa-file"></i>filewdqwwdwdwefef</div>
-                    <div class="box folder"><i class="fas fa-folder"></i>folderadwdwedede</div>
-                    <div class="box file"><i class="fas fa-file"></i>filewdqwwdwdwefef</div>
-                    <div class="box folder"><i class="fas fa-folder"></i>folderadwdwedede</div>
-                    <div class="box file"><i class="fas fa-file"></i>filewdqwwdwdwefef</div>
-                    <div class="box folder"><i class="fas fa-folder"></i>folderadwdwedede</div>
-                    <div class="box file"><i class="fas fa-file"></i>filewdqwwdwdwefef</div>
-                    <div class="box folder"><i class="fas fa-folder"></i>folderadwdwedede</div>
-                    <div class="box file"><i class="fas fa-file"></i>filewdqwwdwdwefef</div>
-                    <div class="box folder"><i class="fas fa-folder"></i>folderadwdwedede</div>
-                    <div class="box file"><i class="fas fa-file"></i>filewdqwwdwdwefef</div>
-                    <div class="box folder"><i class="fas fa-folder"></i>folderadwdwedede</div>
+                <div id="explorer-container" class="explorer-container">
+                    <div class="box"><i class="fas fa-file"></i>xxxxxxxa</div>
+                    <div class="box"><i class="fas fa-file"></i>xxxxxxxa</div>
+                    
+
                 </div>
+            <div id="explorerStatus"></div>
             </div>
         </div>
     </div>
@@ -40,18 +31,83 @@ export default {
   data() {
     return {
       cmpid: 'nl_test_20190101',
-      navAddress: window.cwd
+      navAddress: 'C:\\',
+      data: {},
     }
   },
   methods: {
-      open (){
-          $('#__explorer').css('display', 'block')
-          $('#_explorer').css('display', 'none')
-      },
-      close(){
+    scanDir(dir) {
+    $('#explorerStatus').html('sending request...')
+    let _this = this
+    if (dir) {
+        $.ajax({
+        type: 'POST',
+        // make sure you respect the same origin policy with this url:
+        // http://en.wikipedia.org/wiki/Same_origin_policy
+        url: 'http://127.0.0.1:3000/getpath',
+        data: {
+            dir,
+        },
+        success(msg) {
+            console.log('Res from AJAX: ', msg)
+            console.log('dir @ scanDir(dir): ', dir)
+            switch (msg) {
+            case '-4048':
+                $('#explorer-container').html("Access denied.")
+                break
+            case '-4058':
+                $('#explorer-container').html("Not found.")
+                break
+            case '[]':
+                $('#explorer-container').html("Empty directory.")
+                break
+            default:
+                console.log(msg)
+                msg = JSON.parse(msg)
+                if(typeof msg == 'object' || typeof msg == 'array') {
+                    var data = ""
+                    console.log("isObj")
+                    msg.forEach(e => {
+                        var filename = e[1].replace(_this.navAddress, "")
+                        console.log(filename)
+                        switch(e[0]) {
+                            case 'file':
+                                var icon = "file-alt"
+                                break
+                            case 'folder':
+                                var icon = "folder"
+                                break
+                            default:
+                                var icon = "file"
+                        }
+                        window.expdata += `<div class="box" @click="scanDir('${e[1]}')"><i class="fas fa-${icon}"></i>${filename}</div>`
+                    });
+                    $('#explorer-container').html(data)
+                    $('#explorerStatus').html('Completed.')
+                    return;
+                }
+                console.log(typeof msg)
+                console.log("!Obj ->", msg)
+                $('#explorerStatus').html('Error')
+            }
+        },
+        })
+    } else {
+        console.log('No path defined @ scanDir().')
+        $('#explorerStatus').html('Empty path')
+        }
+    },
+    open (){
+        $('#__explorer').css('display', 'block')
+        $('#_explorer').css('display', 'none')
+    },
+    close(){
         $('#__explorer').css('display', 'none')
         $('#_explorer').css('display', 'block')
-      }
+    },
+    explorerBack(){
+
+    },
   },
 }
 </script>
@@ -73,12 +129,11 @@ export default {
         }
     }
     #__explorer{
-        border: 1px solid #000000;
         display: none;
         width: 96%;
         height: 100%;
-        background-color: #34495e;
-        border: 2px solid #3498db;
+        background: rgb(44,62,80);
+        background: linear-gradient(185deg, rgba(44,62,80,1) 0%, rgba(89,102,103,1) 0%, rgba(72,89,99,1) 33%, rgba(52,73,94,1) 100%);
         margin: 20px;
 
         i {
@@ -92,18 +147,23 @@ export default {
         }
 
         .explorer_contents {
+         
             margin: 15px;
             .file-man-bar {
-                margin-bottom: 15px;
+                position: absolute;
+                margin: 15px 0;
                 input {
                     margin: 0 36px 0 21px; 
-                    border: 2px solid #3498db;
+                    //border: 2px solid #3498db;
+                    border: none;
                     background-color: #34495e;
                     border-radius: 5px;
                     height: 40px;
                     border-radius: 5px;
                     width: 612px;
                     padding-left: 10px;
+                    font-family: brownprolight, sans-serif;
+                    color:#FFFFFF;
                 }
                 i {
                     padding-left: 15px;
@@ -114,23 +174,31 @@ export default {
                     font-size: 15px;
                     cursor: pointer;
                 }
+                .navAddress {
+                    background: rgb(44,62,80);
+                    background: linear-gradient(199deg, rgba(44,62,80,1) 0%, rgba(89,102,103,1) 0%, rgba(72,89,99,1) 33%, rgba(52,73,94,1) 100%);
+                }
             }
             .explorer-container {
-                margin: 36px 0 0 20px;
+                margin: 12px 0 0 20px;
                 border-radius: 5px;
                 height: 604px;
                 width: 98.6%;
                 overflow-y: scroll;
+                display: inline-block;
 
                 &::-webkit-scrollbar-track  {
-                    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-                    box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-                    background-color: #34495e;
+                    // -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+                    // box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+                    // background-color: #34495e;
+                    -webkit-box-shadow: none;
+                    box-shadow: none;
+                    background-color: transparent;
                 }
 
                 &::-webkit-scrollbar {
                     width: 4px;
-                    background-color: #2c3e50;
+                    background-color: transparent;
                 }
 
                 &::-webkit-scrollbar-thumb {
