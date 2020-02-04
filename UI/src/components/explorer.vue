@@ -7,19 +7,26 @@
             <div class="close" @click="close()"><i class="fas fa-times-circle"></i></div>
             <div class="explorer_contents">
                 <div class="file-man-bar">
-                    <i @click="explorerBack" class="fas fa-angle-left"></i>
+                    <i @click="backNav" class="fas fa-angle-left"></i>
                     <i @click="scanDir(navAddress)" class="fas fa-redo"></i>
-                    <input v-model="navAddress"
+                    <input v-model.lazy="navAddress"
                            class="navAddress"
                            type="text" >
                 </div>
-                <div id="explorer-container" class="explorer-container">
-                    <div class="box"><i class="fas fa-file"></i>xxxxxxxa</div>
-                    <div class="box"><i class="fas fa-file"></i>xxxxxxxa</div>
-                    
+                <div  id="explorer-container"
+                      class="explorer-container">
+
+                    <div class="box animated fadeIn delay-.5s"
+                         v-bind:key="a"
+                         v-for="(b, a) in data"
+                         @click="openHandler(b[0], b[1])"
+                         :disabled="(b[0]=='file')?'':'disabled'">
+                        <i class="fas"
+                           :class="(b[0]=='file'||b[0]=='folder')?(b[0]=='file')?'fa-file-alt':'fa-folder':'fa-file'"></i>{{b[1].replace(navAddress+'\\', '')}}
+                    </div>
 
                 </div>
-            <div id="explorerStatus"></div>
+            <div id="explorerStatus">Idle</div>
             </div>
         </div>
     </div>
@@ -31,14 +38,33 @@ export default {
   data() {
     return {
       cmpid: 'nl_test_20190101',
+      navAddressArr: 'C:\\',
       navAddress: 'C:\\',
       data: {},
     }
   },
   methods: {
+    fetchExports(e) {
+        var _this = this
+        $.ajax({
+            type: 'POST',
+            // make sure you respect the same origin policy with this url:
+            // http://en.wikipedia.org/wiki/Same_origin_policy
+            url: 'http://127.0.0.1:3000/read-exports',
+            contentType: 'application/json',
+            data: JSON.stringify({
+            data: {
+                path: e,
+            },
+            }),
+            success(msg) {
+            _this.$emit('loadContent', msg)
+            },
+        })
+    },
     scanDir(dir) {
-    $('#explorerStatus').html('sending request...')
     let _this = this
+    $('#explorerStatus').html('sending request...')
     if (dir) {
         $.ajax({
         type: 'POST',
@@ -53,22 +79,28 @@ export default {
             console.log('dir @ scanDir(dir): ', dir)
             switch (msg) {
             case '-4048':
-                $('#explorer-container').html("Access denied.")
+                $('#explorerStatus').html("Access denied.")
                 break
             case '-4058':
-                $('#explorer-container').html("Not found.")
+                $('#explorerStatus').html("Not found.")
                 break
             case '[]':
-                $('#explorer-container').html("Empty directory.")
+                $('#explorerStatus').html("Empty directory.")
                 break
             default:
                 console.log(msg)
                 msg = JSON.parse(msg)
                 if(typeof msg == 'object' || typeof msg == 'array') {
-                    var data = ""
+                    sessionStorage.setItem('prevNavAddress', this.navAddress)
+                    _this.navAddress = dir
+                    _this.data = msg
+                    $('#explorerStatus').html('Completed.')
+                    return;
+                    //$('#explorerStatus').html('')
+                    /*var data = ""
                     console.log("isObj")
                     msg.forEach(e => {
-                        var filename = e[1].replace(_this.navAddress, "")
+                        var filename = e[1].replace(_this.navAddress, " - ")
                         console.log(filename)
                         switch(e[0]) {
                             case 'file':
@@ -80,15 +112,19 @@ export default {
                             default:
                                 var icon = "file"
                         }
-                        window.expdata += `<div class="box" @click="scanDir('${e[1]}')"><i class="fas fa-${icon}"></i>${filename}</div>`
-                    });
-                    $('#explorer-container').html(data)
-                    $('#explorerStatus').html('Completed.')
-                    return;
+                        
+                        var $div = $("<div>", {"class": "box"});
+                        var $li = $("<li>", {"class": "fas fa-"+icon});
+                        $($li).html(filename)
+                        $div.attr('v-on:click', _this.open(e[0], e[1]))
+                        $li.appendTo($div)
+                        $div.appendTo($("#explorer-container"))
+                        data = window.expdata += `<div class="box" @click="scanDir('${e[1]}')"><i class="fas fa-${icon}"></i>${filename}</div>`
+                    });*/
                 }
                 console.log(typeof msg)
                 console.log("!Obj ->", msg)
-                $('#explorerStatus').html('Error')
+                $('#explorerStatus').html('Endpoint Error')
             }
         },
         })
@@ -105,14 +141,51 @@ export default {
         $('#__explorer').css('display', 'none')
         $('#_explorer').css('display', 'block')
     },
-    explorerBack(){
-
+    openHandler(e, x){
+        console.log(e)
+        if(e =='file'){
+            this.fetchExports(x)
+        } else if(e=='folder'){
+            this.scanDir(x)
+        } else {
+            $('#explorerStatus').html('Can\'t open file: ',e)
+        }
+        
+    },
+    backNav(){
+        var navDirArray = this.navAddress.split('\\')
+        
+        if(typeof navDirArray == 'object' && navDirArray.length>1){
+            console.log(navDirArray)
+            if(navDirArray.length=="2"){
+                navDirArray.pop()
+                navDirArray += "\\"
+                this.scanDir(navDirArray)
+                return
+            }
+            navDirArray.pop()
+            navDirArray = navDirArray.join('\\')
+            console.log("xxxnavDirArray-->", navDirArray)
+            this.scanDir(navDirArray)
+            //this.scanDir(navDirArray)
+            //this.scanDir(sessionStorage.getItem('prevNavAddress'))
+        }
     },
   },
+  watch: {
+      navAddress (){
+          this.scanDir(this.navAddress)
+      }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
+#explorerStatus {
+    letter-spacing: 1.5px;
+    font-size: 12px;
+    text-transform: uppercase;
+}
 #explorer {
     .container {
         .close {
@@ -186,7 +259,8 @@ export default {
                 width: 98.6%;
                 overflow-y: scroll;
                 display: inline-block;
-
+    
+                scrollbar-width: thin;
                 &::-webkit-scrollbar-track  {
                     // -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
                     // box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
@@ -214,18 +288,23 @@ export default {
                     border-radius: 5px;
                 }
 
+
                 .box {
+                    cursor: pointer;
                     margin: 9px;
                     height: 35px;
-                    width: 200px;
                     font-size: 14px;
                     display: flex;
-                    justify-content: center;
-                    align-content: center;
+                    justify-content: flex-start;
+                    align-items: center;
 
                     i {
-                        padding-right: 13px;
+                        padding: 0 13px;
                         font-size: 20px;
+                    }
+
+                    &:hover {
+                        background-color: #3498db;
                     }
                 }
             }

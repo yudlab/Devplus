@@ -35,7 +35,40 @@
                 </div>
             </div>
             <div id="nldata" style="display: none">{{newsdata.currentPid.baseURL}}</div>
-            <h1 style="font-size: 14px;">{{$data}}</h1>
+            <table>
+              <tr>
+                <td>preheader text</td>
+                <td>- {{preheader_text}}</td>
+              </tr>
+              <tr>
+                <td>preheader link</td>
+                <td>- {{preheader_link}}</td>
+              </tr>
+              <tr>
+                <td>cmpid</td>
+                <td>- {{cmpid}}</td>
+              </tr>
+              <tr>
+                <td>cpd</td>
+                <td>- {{cpd}}</td>
+              </tr>
+              <tr>
+                <td>subject</td>
+                <td>- {{subject}}</td>
+              </tr>
+              <tr>
+                <td>ml</td>
+                <td>- {{ml}}</td>
+              </tr>
+              <tr>
+                <td>week / date</td>
+                <td>- {{week}} / {{date}}</td>
+              </tr>
+              <tr>
+                <td>tracking</td>
+                <td>- {{tracking}}</td>
+              </tr>
+            </table>
         </div>
     </div>
 </template>
@@ -163,11 +196,12 @@ export default {
     submit() {
       if (this.newsdata !== '') {
         if (sessionStorage.getItem('task-status') === 'pending') {
-          this.fetchExports()
           this.msg('A task is already running...')
-          setTimeout(() => {
+          if(sessionStorage.getItem('task-msg') !==null || sessionStorage.getItem('task-msg') !=='') {
+            setTimeout(() => {
             this.msg(sessionStorage.getItem('task-msg'))
-          }, 1500)
+            }, 3000)
+          }
           return
         }
         $.ajax({
@@ -189,7 +223,7 @@ export default {
               $('#projectStatus').html(msg)
             }, 2000)
             $('#projectStatus').css('display', 'flex')
-            if (msg == '202') {
+            if (msg == 'Accepted') {
               $('#cmpid').removeClass('ok')
               $('#cmpid').addClass('created')
             } else {
@@ -201,7 +235,6 @@ export default {
         sessionStorage.setItem('task-status', 'pending')
         $('#projectStatus').html('Waiting for exports...')
         $('#submitnews').addClass('disabled animated infinite pulse')
-        this.fetchExports()
       } else {
         console.log('No path defined @ scanDir().')
       }
@@ -212,29 +245,6 @@ export default {
       }, 2000)
       $('#projectStatus').css('display', 'none')
       $('#projectStatus').html('')
-    },
-    fetchExports() {
-      var _this = this
-      $.ajax({
-        type: 'POST',
-        // make sure you respect the same origin policy with this url:
-        // http://en.wikipedia.org/wiki/Same_origin_policy
-        url: 'http://127.0.0.1:3000/read-exports',
-        contentType: 'application/json',
-        data: JSON.stringify({
-          data: {
-            path: `${this.cpd}\\visu.html`,
-          },
-        }),
-        success(msg) {
-          sessionStorage.setItem('htmlExportRaw', msg)
-          console.log(msg)
-          var exports = _this.cleanNews(msg)
-          window.export = exports
-          sessionStorage.setItem('htmlExport', exports)
-          _this.msg('Editor loaded.')
-        },
-      })
     },
     /*emit() {
       this.$socket.emit('test', 'data')
@@ -435,6 +445,21 @@ export default {
             .disabled {
                 cursor: progress;
             }
+        }
+        table tr {
+
+          td {
+            font-family: 'brownprolight';
+            color: #000000;
+            font-size: 1.4rem;
+            
+            &:last-child  {
+            }
+            &:first-child {
+              text-align: right;
+              font-size: 0.8rem;
+            }
+          }
         }
     }
 </style>

@@ -65,7 +65,7 @@ app.post('/submit-news',function(req,res){
             if (!fs.existsSync(req.body.data.folderData)){
                 console.log("Creating Folder->", req.body.data.folderData)
                 fs.mkdirSync(req.body.data.folderData)
-                res.send("202: Accepted")
+                res.send(202)
                 return
             } else {
                 res.send("ERR: Already exist.")

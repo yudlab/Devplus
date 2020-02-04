@@ -1,6 +1,7 @@
 <template>
   <div class="code">
-    <explorer id="explorer"></explorer>
+    <explorer @loadContent="loadContent"
+              id="explorer"></explorer>
     <codemirror
       id="code-container"
       v-model="code"
@@ -41,8 +42,8 @@ export default {
     explorer
   },
   methods: {
-    loadCode() {
-
+    loadContent(msg) {
+      this.code = msg
     },
   },
 };
