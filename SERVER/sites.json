@@ -3,7 +3,7 @@
 		"id": "1",
 		"name": "Tati",
 		"baseURL": "https://www.tati.fr/",
-		"templateRoot": "_NEWSLETTER\\img.tati.fr\\_template",
+		"templateRoot": "C:\\www\\dev-plus\\SERVER\\folders\\_NEWSLETTER\\img.tati.fr\\_template",
 		"nlWorkingDir": "C:\\www\\test\\",
 		"newsletterTypes": {
 			"default": "nl_template_default_2018",

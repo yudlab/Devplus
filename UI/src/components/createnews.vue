@@ -35,7 +35,7 @@
                 </div>
             </div>
             <div id="nldata" style="display: none">{{newsdata.currentPid.baseURL}}</div>
-            <table>
+            <!--<table>
               <tr>
                 <td>preheader text</td>
                 <td>- {{preheader_text}}</td>
@@ -68,7 +68,8 @@
                 <td>tracking</td>
                 <td>- {{tracking}}</td>
               </tr>
-            </table>
+            </table>-->
+            {{nldata.currentPid.templateRoot}}
         </div>
     </div>
 </template>
@@ -194,6 +195,7 @@ export default {
       }
     },
     submit() {
+      var _this = this
       if (this.newsdata !== '') {
         if (sessionStorage.getItem('task-status') === 'pending') {
           this.msg('A task is already running...')
@@ -223,7 +225,8 @@ export default {
               $('#projectStatus').html(msg)
             }, 2000)
             $('#projectStatus').css('display', 'flex')
-            if (msg == 'Accepted') {
+            if (msg == 'OK') {
+              _this.fsCopy()
               $('#cmpid').removeClass('ok')
               $('#cmpid').addClass('created')
             } else {
@@ -303,7 +306,40 @@ export default {
       return String(e).replace(/&amp;|&lt;|&gt;|&quot;|&#39;|&#x2F;|&#x60;|&#x3D;/g, function (s) {
         return entityMap[s];
       })
-    }
+    },
+    fsCopy() {
+      console.log("this.cpd-> ", this.cpd)
+      console.log("this.nldata.currentPid.templateRoot-> ", this.nldata.currentPid.templateRoot)
+      if (this.cpd !== '' && this.nldata.currentPid.templateRoot !=='') {
+        $.ajax({
+          type: 'POST',
+          // make sure you respect the same origin policy with this url:
+          // http://en.wikipedia.org/wiki/Same_origin_policy
+          url: 'http://127.0.0.1:3000/fs-copy',
+          contentType: 'application/json',
+          data: JSON.stringify({
+            data: {
+              from: this.nldata.currentPid.templateRoot,
+              to: this.cpd
+            },
+          }),
+          success(msg) {
+            console.log('From AJAX @fs-copy->res : ', msg)
+            if (msg == 'OK') {
+              $('#cmpid').removeClass('ok')
+              $('#cmpid').addClass('created')
+              $('#projectStatus').html("Files were generated.")
+            } else {
+              $('#cmpid').removeClass('ok')
+              $('#cmpid').addClass('na')
+              $('#projectStatus').html(msg)
+            }
+          },
+        })
+      } else {
+        console.log('error copy @ this.nldata.currentPid.templateRoot-->  ', this.nldata.currentPid.templateRoot)
+      }
+    },
   },
   /*sockets: {
     connect() {
@@ -329,7 +365,7 @@ export default {
       console.log('Path-> ', path)
       this.scanDir(path)
       this.cpd = path
-      window.cwd = path
+      window.cpd = path
       sessionStorage.setItem('task-status', 'undefined')
     },
   },
@@ -454,6 +490,7 @@ export default {
             font-size: 1.4rem;
             
             &:last-child  {
+              color: #000000;
             }
             &:first-child {
               text-align: right;

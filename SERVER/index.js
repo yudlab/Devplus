@@ -1,12 +1,13 @@
 console.clear()
 const app = require('express')()
 var server = require('http').Server(app)
-var io = require('socket.io')(server)
 const bodyParser = require('body-parser')
 var cors = require('cors')
 const port = 3000
 var pids = require('./sites')
 var fs = require('fs')
+var ncp = require('ncp').ncp;
+ncp.limit = 16;
 const open = require('open')
 //app.use(bodyParser.urlencoded({ extended: true }))
 // parse application/x-www-form-urlencoded
@@ -65,7 +66,7 @@ app.post('/submit-news',function(req,res){
             if (!fs.existsSync(req.body.data.folderData)){
                 console.log("Creating Folder->", req.body.data.folderData)
                 fs.mkdirSync(req.body.data.folderData)
-                res.send(202)
+                res.send(200)
                 return
             } else {
                 res.send("ERR: Already exist.")
@@ -113,4 +114,33 @@ app.post('/open',function(req,res){
     //await open('https://sindresorhus.com', {app: ['google chrome', '--incognito'], wait: false});
     //console.log('The explorer window was closed');
     res.sendStatus(200)
+});
+
+app.post('/fs-copy',function(req,res){
+    var from = req.body.data.from
+    var to = req.body.data.to
+    if(from && to){
+        //console.log(JSON.stringify(req.body.data))
+        //console.log(newsData.currentPid.nlWorkingDir)
+        //console.dir(myJson.newsData.currentPid.id, {colors: true})
+        try {
+            if(fs.existsSync(from)!=='' && fs.existsSync(to)!==''){
+                ncp(from, to, function (err) {
+                    if (err) {
+                      res.sendStatus(500)  
+                      return console.error(err);
+                    }
+                    res.sendStatus(200)
+                });
+            } else {
+                res.sendStatus(500)
+                console.log("error wih paths")
+            }
+        } catch(err){
+            console.log(err)
+            res.send(err)
+        }
+    } else {
+        res.sendStatus(400)
+    }
 });

@@ -34,7 +34,7 @@ export default {
         lineWrapping: true,
         scrollbarStyle: null
       },
-      cwd: window.cwd
+      cpd: ''
     };
   },
   components: {
@@ -45,7 +45,35 @@ export default {
     loadContent(msg) {
       this.code = msg
     },
+    loadExports() {
+      if(window.cpd!==''){
+        this.fetchExports(window.cpd)
+      }
+    },
+    fetchExports(e) {
+        var _this = this
+        console.log(e)
+        $.ajax({
+            type: 'POST',
+            // make sure you respect the same origin policy with this url:
+            // http://en.wikipedia.org/wiki/Same_origin_policy
+            url: 'http://127.0.0.1:3000/read-exports',
+            contentType: 'application/json',
+            data: JSON.stringify({
+              data: {
+                  path: e+'\\visu.html',
+              },
+            }),
+            success(msg) {
+              console.log("Success @ fetchExport->Editor")
+              _this.code = msg
+            },
+        })
+    },
   },
+  mounted() {
+    this.loadExports()
+  }
 };
 </script>
 <style lang="scss"> 
