@@ -39,7 +39,7 @@ export default {
     return {
       cmpid: 'nl_test_20190101',
       navAddressArr: 'C:\\',
-      navAddress: 'C:\\',
+      navAddress: 'C:\\www',
       data: {},
     }
   },
@@ -134,8 +134,10 @@ export default {
         }
     },
     open (){
+        this.updatePath()
         $('#__explorer').css('display', 'block')
         $('#_explorer').css('display', 'none')
+        this.scanDir(this.navAddress)
     },
     close(){
         $('#__explorer').css('display', 'none')
@@ -145,6 +147,7 @@ export default {
         console.log(e)
         if(e =='file'){
             this.fetchExports(x)
+            this.close()
         } else if(e=='folder'){
             this.scanDir(x)
         } else {
@@ -171,11 +174,21 @@ export default {
             //this.scanDir(sessionStorage.getItem('prevNavAddress'))
         }
     },
+    updatePath(){
+        if( "undefined" !== window.cpd ){
+            this.navAddress = window.cpd
+            console.log("NAVBAR ADDR ->", window.cpd)
+        } else {
+            console.log('error', window.cpd)
+        }
+    },
   },
   watch: {
       navAddress (){
           this.scanDir(this.navAddress)
       }
+  },
+  mounted () {
   }
 }
 </script>
@@ -186,7 +199,15 @@ export default {
     font-size: 12px;
     text-transform: uppercase;
 }
-#explorer {
+#explorer { 
+    height: 82vh;
+    width: 60%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: white;
+    z-index: 99;
+
     .container {
         .close {
             color: #000000;
@@ -220,7 +241,7 @@ export default {
         }
 
         .explorer_contents {
-         
+         height: 80vh;
             margin: 15px;
             .file-man-bar {
                 position: absolute;
@@ -255,7 +276,7 @@ export default {
             .explorer-container {
                 margin: 12px 0 0 20px;
                 border-radius: 5px;
-                height: 604px;
+                height: 82%;
                 width: 98.6%;
                 overflow-y: scroll;
                 display: inline-block;
