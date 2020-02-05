@@ -1,5 +1,9 @@
 <template>
   <div class="code">
+    <!--div v-if="cpd"
+         id="file-operations">
+      xxx
+    </div-->
     <explorer @loadContent="loadContent"
               id="explorer"></explorer>
     <codemirror
@@ -47,6 +51,7 @@ export default {
     },
     loadExports() {
       if(window.cpd!==''){
+        this.cpd = window.cpd
         this.fetchExports(window.cpd)
       }
     },
@@ -79,16 +84,7 @@ export default {
 <style lang="scss"> 
 #app {
   .code {
-      height: 100%;
-      #explorer {
-        height: 100%;
-        width: 60%;
-        position: absolute;
-        top: 0;
-        right: 0;
-        color: white;
-        z-index: 99;
-      }
+    height: 90%;
       #code-container {
         position: relative;
         height: 100%;
