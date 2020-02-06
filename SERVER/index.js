@@ -148,7 +148,9 @@ app.post('/fs-copy',function(req,res){
 app.post('/fs-save',function(req,res){
     var contents = req.body.data.contents
     var path = req.body.data.path
-    var allowAppend = (req.body.data.allowAppend==true)?true:false
+    console.log(contents)
+    console.log(path)
+    var fsforceWrite = (req.body.data.fsforceWrite==true)?true:false
     if(contents!=='' && '' !== path){
         try {
             if(!fs.existsSync(path)){
@@ -164,13 +166,13 @@ app.post('/fs-save',function(req,res){
                     console.log('File created successfully.')
                 })
             } else {
-                if(allowAppend){
-                    fs.appendFile(path, contents, function (err) {
+                if(fsforceWrite){
+                    fs.writeFile(path, contents, "utf8", function (err) {
                         if (err) {
                             res.sendStatus(500)
                             console.log(`an error occured while saving new
                             file: ${path}
-                            allowAppend: ${allowAppend}
+                            fsforceWrite: ${fsforceWrite}
 
                             contents: ${contents}
                             
@@ -178,12 +180,12 @@ app.post('/fs-save',function(req,res){
                             return;
                         }
                         res.sendStatus(200)
-                        console.log('File created successfully.')
+                        console.log('File overwritten successfully.')
                         return;
                     })
                 } else {
                     res.sendStatus(500)
-                    console.log(`file: ${path} exists, allowAppend = ${allowAppend}`)
+                    console.log(`file: ${path} exists, fsforceWrite = ${fsforceWrite}`)
                 }
             }
         } catch(err){

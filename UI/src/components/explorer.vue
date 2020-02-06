@@ -40,27 +40,30 @@ export default {
       cmpid: 'nl_test_20190101',
       navAddressArr: 'C:\\',
       navAddress: 'C:\\www',
-      data: {},
+      editorFile: '',
+      data: {}
     }
   },
   methods: {
     fetchExports(e) {
-        var _this = this
-        $.ajax({
-            type: 'POST',
-            // make sure you respect the same origin policy with this url:
-            // http://en.wikipedia.org/wiki/Same_origin_policy
-            url: 'http://127.0.0.1:3000/read-exports',
-            contentType: 'application/json',
-            data: JSON.stringify({
-            data: {
-                path: e,
-            },
-            }),
-            success(msg) {
-            _this.$emit('loadContent', msg)
-            },
-        })
+        if(''!==e&&undefined!==e){
+            var _this = this
+            $.ajax({
+                type: 'POST',
+                // make sure you respect the same origin policy with this url:
+                // http://en.wikipedia.org/wiki/Same_origin_policy
+                url: 'http://127.0.0.1:3000/read-exports',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                data: {
+                    path: e,
+                },
+                }),
+                success(msg) {
+                _this.$emit('loadContent', msg)
+                },
+            })
+        }
     },
     scanDir(dir) {
     let _this = this
@@ -91,36 +94,10 @@ export default {
                 console.log(msg)
                 msg = JSON.parse(msg)
                 if(typeof msg == 'object' || typeof msg == 'array') {
-                    sessionStorage.setItem('prevNavAddress', this.navAddress)
                     _this.navAddress = dir
                     _this.data = msg
                     $('#explorerStatus').html('Completed.')
                     return;
-                    //$('#explorerStatus').html('')
-                    /*var data = ""
-                    console.log("isObj")
-                    msg.forEach(e => {
-                        var filename = e[1].replace(_this.navAddress, " - ")
-                        console.log(filename)
-                        switch(e[0]) {
-                            case 'file':
-                                var icon = "file-alt"
-                                break
-                            case 'folder':
-                                var icon = "folder"
-                                break
-                            default:
-                                var icon = "file"
-                        }
-                        
-                        var $div = $("<div>", {"class": "box"});
-                        var $li = $("<li>", {"class": "fas fa-"+icon});
-                        $($li).html(filename)
-                        $div.attr('v-on:click', _this.open(e[0], e[1]))
-                        $li.appendTo($div)
-                        $div.appendTo($("#explorer-container"))
-                        data = window.expdata += `<div class="box" @click="scanDir('${e[1]}')"><i class="fas fa-${icon}"></i>${filename}</div>`
-                    });*/
                 }
                 console.log(typeof msg)
                 console.log("!Obj ->", msg)
@@ -135,10 +112,9 @@ export default {
     },
     open (){
         $('#explorer').css('width', '60%')
-        this.updatePath()
         $('#__explorer').css('display', 'block')
         $('#_explorer').css('display', 'none')
-        this.scanDir(this.navAddress)
+        this.scanDir(this.updatePath())
     },
     close(){
         $('#explorer').css('width', '0')
@@ -149,6 +125,7 @@ export default {
         console.log(e)
         if(e =='file'){
             this.fetchExports(x)
+            this.editorFile = x
             this.close()
         } else if(e=='folder'){
             this.scanDir(x)
@@ -170,24 +147,24 @@ export default {
             }
             navDirArray.pop()
             navDirArray = navDirArray.join('\\')
-            console.log("xxxnavDirArray-->", navDirArray)
             this.scanDir(navDirArray)
-            //this.scanDir(navDirArray)
-            //this.scanDir(sessionStorage.getItem('prevNavAddress'))
         }
     },
     updatePath(){
-        if( "undefined" !== window.cpd && "" !== window.cpd ){
-            this.navAddress = window.cpd
-            console.log("NAVBAR ADDR ->", window.cpd)
+        var e = sessionStorage.getItem('newsPath')
+        if( "undefined" !== e || "" !== e ){
+            return e
         } else {
-            console.log('error', window.cpd)
+            return this.navAddress
         }
     },
   },
   watch: {
       navAddress (){
           this.scanDir(this.navAddress)
+      },
+      editorFile () {
+          sessionStorage.setItem( 'editorFile', this.editorFile )
       }
   },
   mounted () {

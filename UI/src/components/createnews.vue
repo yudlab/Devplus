@@ -357,7 +357,8 @@ export default {
       console.log('Path-> ', path)
       this.scanDir(path)
       this.cpd = path
-      window.cpd = path
+      sessionStorage.setItem('editorFile', path+'\\visu.html')
+      sessionStorage.setItem('newsPath', path)
       sessionStorage.setItem('task-status', 'undefined')
     },
   },

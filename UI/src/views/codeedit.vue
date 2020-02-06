@@ -38,7 +38,7 @@ export default {
   name: 'codeedit',
   data() {
     return {
-      code: window.export,
+      code: sessionStorage.getItem('editorContents'),
       cmOptions: {
         tabSize: 4,
         theme: 'lucario',
@@ -48,8 +48,7 @@ export default {
         lineWrapping: true,
         scrollbarStyle: null
       },
-      cpd: '',
-      editorFilePath: '',
+      editorFile: '',
       filename: '\\visu.html',
     };
   },
@@ -67,9 +66,9 @@ export default {
       this.code = msg
     },
     loadExports() {
-      if(window.cpd!==''&&undefined!=window.cpd){
-        this.cpd = window.cpd
-        this.fetchExports(window.cpd)
+      var e = sessionStorage.getItem('editorFile')
+      if(e!==''&&undefined!=e){
+        this.fetchExports(e)
       }
     },
     fetchExports(e) {
@@ -84,7 +83,7 @@ export default {
               contentType: 'application/json',
               data: JSON.stringify({
                 data: {
-                    path: e+'\\visu.html',
+                    path: e,
                 },
               }),
               success(msg) {
@@ -96,13 +95,16 @@ export default {
           console.log('Error: empty path to fetch.')
         }
     },
+    updateEditor(){
+      sessionStorage.setItem('editorContents', this.code)
+    },
     fsSave() {
       var e = this.code
       console.log(e)
-      var f = window.cpd+this.filename
+      var f = sessionStorage.getItem('editorFile')
       if(""!=e || "undefined"!==e){
         if(""==f || "undefined"==f){
-          console.log("Path error.")
+          alert("Path error.")
           return;
         }
         console.log("File will be saved in: ",f)
@@ -116,37 +118,42 @@ export default {
               data: {
                   contents: e,
                   path: f,
-                  allowAppend: true,
+                  fsforceWrite: true,
               },
             }),
             success(msg) {
               switch(msg){
-                case '200':
+                case 'OK':
                   console.log("file was saved.")
+                  $('#fa-save').addClass('success')
                   setTimeout(function(){
-                    $('#fa-save').addClass('success')
+                    $('#fa-save').removeClass('success')
                   }, 3000)
-                  $('#fa-save').removeClass('success')
                   return;
                 case '500':
                 case '400':
                 case '100':
                 default:  
-                  console.log("Error, file not saved. ->", msg) 
+                  alert("Error, file not saved. ->", msg) 
+                  $('#fa-save').addClass('failed')
                   setTimeout(function(){
-                    $('#fa-save').addClass('failed')
-                  }, 3000)
                   $('#fa-save').removeClass('failed')
+                  }, 3000)
               }
             },
         })
       } else {
-        console.log("Error: Empty file." )
+        alert("Error: Empty file." )
       }
     }
   },
   mounted() {
     this.loadExports()
+  },
+  watch:{
+    code(){
+      this.updateEditor()
+    },
   }
 };
 </script>
@@ -184,7 +191,7 @@ export default {
           align-items: center;
           justify-content: center;
           font-size: 1.5rem;
-          height: 1.5rem;
+          height: 3.8rem;
           width: 2.9rem;
 
           &:hover {
