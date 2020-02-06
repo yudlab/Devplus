@@ -134,12 +134,14 @@ export default {
         }
     },
     open (){
+        $('#explorer').css('width', '60%')
         this.updatePath()
         $('#__explorer').css('display', 'block')
         $('#_explorer').css('display', 'none')
         this.scanDir(this.navAddress)
     },
     close(){
+        $('#explorer').css('width', '0')
         $('#__explorer').css('display', 'none')
         $('#_explorer').css('display', 'block')
     },
@@ -175,7 +177,7 @@ export default {
         }
     },
     updatePath(){
-        if( "undefined" !== window.cpd ){
+        if( "undefined" !== window.cpd && "" !== window.cpd ){
             this.navAddress = window.cpd
             console.log("NAVBAR ADDR ->", window.cpd)
         } else {
@@ -201,7 +203,7 @@ export default {
 }
 #explorer { 
     height: 82vh;
-    width: 60%;
+    width: 0;
     position: absolute;
     top: 0;
     right: 0;
