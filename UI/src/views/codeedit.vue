@@ -3,16 +3,16 @@
     <div id="file-operations">
       <div class="fas fa-eraser" @click="clear"></div>
       <div id="fa-save" class="fas fa-save" @click="fsSave"></div>
-      <div class="animated fadeInDownv fas fa-paste"></div>
-      <div class="animated fadeInDownv fas fa-code"></div>
-      <div class="animated fadeInDownv fas fa-language"></div>
-      <div class="animated fadeInDownv fas fa-envelope"></div>
-      <div class="animated fadeInDownv fas fa-"></div>
-      <div class="animated fadeInDownv fas fa-"></div>
-      <div class="animated fadeInDownv fas fa-"></div>
-      <div class="animated fadeInDownv fas fa-"></div>
-      <div class="animated fadeInDownv fas fa-"></div>
-      <div class="animated fadeInDownv fas fa-"></div>
+      <div class="fas fa-paste" @click="copyToClipboard($event)"></div>
+      <div class="fas fa-code" @click="optimizeNews"></div>
+      <div class="fas fa-language" @click="entitize"></div>
+      <div class="fas fa-envelope"></div>
+      <div class="fas fa-envelope-open-text"></div>
+      <div class="fas fa-file-upload"></div>
+      <div class="fas fa-"></div>
+      <div class="fas fa-"></div>
+      <div class="fas fa-"></div>
+      <div class="fas fa-"></div>
     </div>
     <explorer @loadContent="loadContent"
               id="explorer"></explorer>
@@ -33,7 +33,7 @@ import { codemirror } from 'vue-codemirror';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/lucario.css';
 import explorer from '@/components/explorer.vue';
-
+import * as yud from '../assets/js/yud.js'
 export default {
   name: 'codeedit',
   data() {
@@ -57,6 +57,19 @@ export default {
     explorer
   },
   methods: {
+    optimizeNews(){
+      this.code = yud.cleanNews(this.code)
+    },
+    copyToClipboard: function ($event){
+      yud.copyToClipboard(this.code)
+      $($event.target).addClass('animated heartBeat')
+      setTimeout(function(){
+        $($event.target).removeClass('animated heartBeat')
+      }, 2000)
+    },
+    entitize(){
+      this.code = yud.entitizer('encode', this.code)
+    },
     clear(){
       this.code=''
       console.clear()

@@ -6,12 +6,11 @@
                 <div class="primary">
                     <input id="cmpid"
                            v-model.lazy="cmpid"
-                           v-on:change="newsDataChanged"
                            name="cmpid"
                            type="text"
                            placeholder="cmpid">
                     <div class="secondary" v-if="cmpid.length > 7">
-                        <input v-model="tracking" name="tracking" type="text" placeholder="tracking">
+                        <input v-model.lazy="tracking" name="tracking" type="text" placeholder="tracking">
                         <input v-model="date" name="date" type="text" placeholder="date">
                         <input v-if="lang" v-model="lang" name="lang" type="text" placeholder="lang">
                     </div>
@@ -69,7 +68,7 @@
                 <td>- {{tracking}}</td>
               </tr>
             </table>-->
-            {{nldata.currentPid.templateRoot}}
+            {{$data}}
         </div>
     </div>
 </template>
@@ -100,21 +99,6 @@ export default {
       console.clear()
       this.msg('Hello 🎉🎉🎉')
       console.log("I'd be happy for any of your suggestions ^^")
-    },
-    newsDataChanged() {
-      this.tracking = this.cmpid
-      const mycmpidarr = this.cmpid.split('_')
-      if (mycmpidarr.length == 3) {
-        this.date = mycmpidarr[2]
-      } else if (mycmpidarr.length == 4) {
-        this.date = mycmpidarr[3]
-        this.lang = mycmpidarr[2]
-      } else {
-        console.log('Invalid date.')
-        return
-      }
-      this.week = this.getWeek(this.date)
-      this.$emit('newsDataChange', this.$data)
     },
     getWeek(rawdate) {
       rawdate = rawdate
@@ -206,6 +190,7 @@ export default {
           }
           return
         }
+        this.$emit('newsDataChange', this.$data)
         $.ajax({
           type: 'POST',
           // make sure you respect the same origin policy with this url:
@@ -226,9 +211,10 @@ export default {
             }, 2000)
             $('#projectStatus').css('display', 'flex')
             if (msg == 'OK') {
-              _this.fsCopy()
               $('#cmpid').removeClass('ok')
               $('#cmpid').addClass('created')
+              _this.fsCopy()
+              sessionStorage.setItem('newsData', JSON.stringify(_this.$data))
             } else {
               $('#cmpid').removeClass('ok')
               $('#cmpid').addClass('na')
@@ -264,48 +250,6 @@ export default {
             mm='0'+mm
         } 
         return dd+mm+yyyy
-    },
-    cleanNews(e){
-      var parser = new DOMParser()
-      var doc = parser.parseFromString( e, "text/html" )
-      var tbl = doc.querySelector('table')
-      $(doc).find("td").attr('valign','bottom')
-      $(doc).find("td").attr('align','center')
-      $(doc).find("td").removeAttr('colspan')
-      $(doc).find("td").removeAttr('rowspan')
-      var imgs = doc.querySelectorAll('img')
-      imgs.forEach(element => {
-        $(element).css('vertical-align', 'bottom')
-        $(element).attr('border', '0')
-      })
-      var hrefs = doc.querySelectorAll('a')
-      hrefs.forEach(a => {
-        var titles = a.querySelector('img')
-        var title = $(titles).attr('alt')
-        $(a).attr('title', title)
-        $(a).attr('target', '_blank')
-        var thislink = $(a).attr('href')
-        thislink = thislink+'?tracking=blablabli&test=ok'
-        $(a).attr('href', thislink)
-      })
-      var html = doc.querySelector("table").outerHTML
-      html = html.replace(/<tbody>|<\/tbody>/, "")
-      return this.escapeHtml(html)
-    },
-    escapeHtml(e) {
-      var entityMap = {
-        '&amp;': '&',
-        '&lt;': '<',
-        '&gt;': '>',
-        '&quot;': '"',
-        "&#39;": '\'',
-        '&#x2F;': '/',
-        '&#x60;': '`',
-        '&#x3D;': '='
-      }
-      return String(e).replace(/&amp;|&lt;|&gt;|&quot;|&#39;|&#x2F;|&#x60;|&#x3D;/g, function (s) {
-        return entityMap[s];
-      })
     },
     fsCopy() {
       console.log("this.cpd-> ", this.cpd)
@@ -348,10 +292,10 @@ export default {
   },
   watch: {
     cmpid() {
-      let _this = this
-      _this.cmpid = _this.sanitize(_this.cmpid)
-      console.log(this.cmpid)
       this.folderIsAvailable = false
+      this.cmpid = this.sanitize(this.cmpid)
+      this.tracking = this.cmpid
+      this.tracking = this.tracking.replace(/\s/gmui, "")
       this.preheader_link = this.newsdata.currentPid.baseURL
       const path = `${this.newsdata.currentPid.nlWorkingDir}S${this.week+'\\'+this.cmpid}`
       console.log('Path-> ', path)
@@ -360,6 +304,20 @@ export default {
       sessionStorage.setItem('editorFile', path+'\\visu.html')
       sessionStorage.setItem('newsPath', path)
       sessionStorage.setItem('task-status', 'undefined')
+      const mycmpidarr = this.cmpid.split('_')
+      if (mycmpidarr.length == 3) {
+        this.date = mycmpidarr[2]
+      } else if (mycmpidarr.length == 4) {
+        this.date = mycmpidarr[3]
+        this.lang = mycmpidarr[2]
+      } else {
+        console.log('Invalid date.')
+        return
+      }
+      this.week = this.getWeek(this.date)
+    },
+    tracking() {
+      this.tracking = this.tracking.replace(/\s/gmui, "")
     },
   },
   mounted() {

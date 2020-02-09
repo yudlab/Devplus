@@ -2,7 +2,8 @@
 	"tati": {
 		"id": "1",
 		"name": "Tati",
-		"baseURL": "https://www.tati.fr/",
+		"siteBaseURL": "https://www.tati.fr",
+		"ftpNewsPath": "http://img.tati.fr/news",
 		"templateRoot": "C:\\www\\dev-plus\\SERVER\\folders\\_NEWSLETTER\\img.tati.fr\\_template",
 		"nlWorkingDir": "C:\\www\\test\\",
 		"newsletterTypes": {

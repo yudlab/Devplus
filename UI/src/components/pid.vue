@@ -32,13 +32,6 @@ export default {
       });
   },
   methods: {
-    add() {
-      axios
-        .post('http://127.0.0.1:3000/getpaths', this.obj)
-        .then((res) => {
-          this.pids = res.data;
-        });
-    },
     pidChanged() {
       this.$emit('pidChanged', this.a);
     },

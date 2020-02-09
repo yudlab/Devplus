@@ -15,6 +15,9 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 var readDirectory = require('./includes/dir-fetch/fs-fetch')
+//const sendx = require('./includes/send-mail/node-mailer')
+const nodemailer = require("nodemailer")
+const login = require('./includes/send-mail/credentials.js')
 
 
 server.listen(port);
@@ -61,7 +64,7 @@ app.post('/submit-news',function(req,res){
                 console.log("Creating Folder->", nlFolder+week)
                 fs.mkdirSync(nlFolder+week)
             } else {
-                console.log("ERR: Already exist.")
+                console.log(nlFolder+week, " already exist.")
             }
             if (!fs.existsSync(req.body.data.folderData)){
                 console.log("Creating Folder->", req.body.data.folderData)
@@ -69,10 +72,11 @@ app.post('/submit-news',function(req,res){
                 res.send(200)
                 return
             } else {
-                res.send("ERR: Already exist.")
+                res.send(req.body.data.folderData, " already exist.")
             }
         } catch(e){
             console.log("ERR: CREATE")
+            console.log(e)
             res.send(e)
         }
         return
@@ -196,3 +200,37 @@ app.post('/fs-save',function(req,res){
         res.sendStatus(400)
     }
 });
+app.post('/gmail-send',function(req,res){
+    if(typeof req.body.to == 'undefined' || req.body.to == ''){
+        res.sendStatus(400)
+        return;
+    }
+    var to = req.body.to
+    var from = (req.body.from!=='')?req.body.from:'Nodemailer'
+    var subject = (req.body.subject!=='')?req.body.subject:'NO SUBJECT'
+    var text = (req.body.text!=='')?req.body.text:'NO TEXT'
+    var html = (req.body.html!=='')?req.body.html:'NO HTML'
+    var transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        secure: true,
+        port: 465,
+        auth: {
+            user: login.gmailuser,
+            pass: login.gmailpass
+        }
+    })
+    const mailOptions = {
+        from: from, // sender address
+        to: to, // list of receivers
+        subject: subject, // Subject line
+        html: html, // plain text body
+        text: text
+    }
+    transporter.sendMail(mailOptions, function (err, info) {
+        if(err){
+          res.send(err)
+        } else
+          res.send(info)
+    })
+})
+
