@@ -1,10 +1,6 @@
 <template>
     <div id="explorer">
-        <div id="_explorer">
-            <div class="close" @click="open()"><i class="fas fa-folder-open"></i></div>
-        </div>
         <div id="__explorer">
-            <div class="close" @click="close()"><i class="fas fa-times-circle"></i></div>
             <div class="explorer_contents">
                 <div class="file-man-bar">
                     <i @click="backNav" class="fas fa-angle-left"></i>
@@ -12,21 +8,24 @@
                     <input v-model.lazy="navAddress"
                            class="navAddress"
                            type="text" >
+                    <div id="explorerStatus">Idle</div>       
                 </div>
                 <div  id="explorer-container"
                       class="explorer-container">
-
                     <div class="box animated fadeIn delay-.5s"
                          v-bind:key="a"
-                         v-for="(b, a) in data"
-                         @click="openHandler(b[0], b[1])"
-                         :disabled="(b[0]=='file')?'':'disabled'">
+                         v-for="(b, a) in data">
+                        <input v-if="b[0]=='folder'||b[0]=='file'"
+                               type="checkbox"
+                               :value="b[1]"
+                               @change="fileSelection"
+                               class="ftpCheck"/>
                         <i class="fas"
+                           @click="openHandler(b[0], b[1])"
                            :class="(b[0]=='file'||b[0]=='folder')?(b[0]=='file')?'fa-file-alt':'fa-folder':'fa-file'"></i>{{b[1].replace(navAddress+'\\', '')}}
                     </div>
 
                 </div>
-            <div id="explorerStatus">Idle</div>
             </div>
         </div>
     </div>
@@ -35,16 +34,31 @@
 
 <script>
 export default {
+  name: 'explorer',
   data() {
     return {
       cmpid: 'nl_test_20190101',
       navAddressArr: 'C:\\',
       navAddress: 'C:\\www',
       editorFile: '',
-      data: {}
+      data: {},
+      ftpData: []
     }
   },
   methods: {
+    fileSelection($event){
+        console.log($event.target.checked)
+        console.log($event.target.value)
+        console.log(this.ftpData)
+        switch($event.target.checked){
+            case true:
+                (this.ftpData.includes($event.target.value))?console.log('on list'):this.ftpData.push($event.target.value)
+                break
+            case false:
+            default:
+                (!this.ftpData.includes($event.target.value))?console.log('not on list'):this.ftpData.splice( this.ftpData.indexOf($event.target.value), 1 )
+        }
+    },
     fetchExports(e) {
         if(''!==e&&undefined!==e){
             var _this = this
@@ -111,15 +125,14 @@ export default {
         }
     },
     open (){
-        $('#explorer').css('width', '60%')
+        $('#explorer').css('width', '100%')
         $('#__explorer').css('display', 'block')
-        $('#_explorer').css('display', 'none')
         this.scanDir(this.updatePath())
     },
     close(){
         $('#explorer').css('width', '0')
         $('#__explorer').css('display', 'none')
-        $('#_explorer').css('display', 'block')
+
     },
     openHandler(e, x){
         console.log(e)
@@ -165,25 +178,30 @@ export default {
       },
       editorFile () {
           sessionStorage.setItem( 'editorFile', this.editorFile )
+      },
+      toggleExplorer (){
+          (this.toggleExplorer)?this.close():this.open();
       }
   },
   mounted () {
+  },
+  props: {
+      toggleExplorer : {
+          type: Boolean,
+          default: false
+      }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-#explorerStatus {
-    letter-spacing: 1.5px;
-    font-size: 12px;
-    text-transform: uppercase;
-}
+
 #explorer { 
-    height: 82vh;
+    height: 100%;
     width: 0;
-    position: absolute;
-    top: 0;
-    right: 0;
+    position: fixed;
+    top: 5rem;
+    left: 0;
     color: white;
     z-index: 99;
 
@@ -194,20 +212,14 @@ export default {
             text-decoration: underline;
         }
     }
-    #_explorer{
-        .close {
-            .fa-folder-open {
-                padding: 20px;
-            }
-        }
-    }
+
     #__explorer{
         display: none;
-        width: 96%;
+        width: 99vw;
         height: 100%;
         background: rgb(44,62,80);
         background: linear-gradient(185deg, rgba(44,62,80,1) 0%, rgba(89,102,103,1) 0%, rgba(72,89,99,1) 33%, rgba(52,73,94,1) 100%);
-        margin: 20px;
+        padding: 20px 20px 20px;
 
         i {
             color: #FFFFFF;
@@ -220,11 +232,9 @@ export default {
         }
 
         .explorer_contents {
-         height: 80vh;
-            margin: 15px;
+         height: 90%;
+            margin: 0 15px 15px;
             .file-man-bar {
-                position: absolute;
-                margin: 15px 0;
                 input {
                     margin: 0 36px 0 21px; 
                     //border: 2px solid #3498db;
@@ -237,6 +247,14 @@ export default {
                     padding-left: 10px;
                     font-family: brownprolight, sans-serif;
                     color:#FFFFFF;
+                }
+                #explorerStatus {
+                    letter-spacing: 1.5px;
+                    font-size: 12px;
+                    text-transform: uppercase;
+                    display: inline;
+                    position: relative;
+                    right: -5px;
                 }
                 i {
                     padding-left: 15px;
@@ -305,6 +323,14 @@ export default {
 
                     &:hover {
                         background-color: #3498db;
+                    }
+                    
+                    .ftpCheck  {
+                        top: 0;
+                        left: 0;
+                        height: 18px;
+                        width: 18px;
+                        background-color: #eee;
                     }
                 }
             }

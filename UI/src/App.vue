@@ -22,6 +22,8 @@
 html, body {
   height: 100%;
   font-family: 'brownprolight' !important;
+  margin: 0;
+  border: 0;
 }
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -50,6 +52,7 @@ html, body {
     padding: 0 15px;
     font-family: integral;
     letter-spacing: 1px;
+    text-decoration: none;
 
     &.router-link-exact-active {
       color: #42b983;

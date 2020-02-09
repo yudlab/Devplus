@@ -6,20 +6,25 @@
       <div class="fas fa-paste" @click="copyToClipboard($event)"></div>
       <div class="fas fa-code" @click="optimizeNews"></div>
       <div class="fas fa-language" @click="entitize"></div>
+      <div class="fas fa-sort-amount-down-alt" @click="indentCode(code, $event)"></div>
       <div class="fas fa-envelope"></div>
       <div class="fas fa-envelope-open-text"></div>
       <div class="fas fa-file-upload"></div>
+      <div class="fas fa-folder" @click="toggleExplorerr"></div>
+      <div class="fas fa-code" @click="indentCode"></div>
       <div class="fas fa-"></div>
       <div class="fas fa-"></div>
       <div class="fas fa-"></div>
       <div class="fas fa-"></div>
     </div>
     <explorer @loadContent="loadContent"
-              id="explorer"></explorer>
+              id="explorer"
+              :toggleExplorer="toggleExplorer"></explorer>
     <codemirror
       id="code-container"
       v-model="code"
-      :options="cmOptions">
+      :options="cmOptions"
+      ref="codeinstance">
     </codemirror>
   </div>
 </template>
@@ -33,7 +38,9 @@ import { codemirror } from 'vue-codemirror';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/lucario.css';
 import explorer from '@/components/explorer.vue';
-import * as yud from '../assets/js/yud.js'
+import * as yud from '../assets/js/yud';
+import prettier from 'prettier/standalone';
+import htmlPrettier from "prettier/parser-html";
 export default {
   name: 'codeedit',
   data() {
@@ -50,6 +57,7 @@ export default {
       },
       editorFile: '',
       filename: '\\visu.html',
+      toggleExplorer: true,
     };
   },
   components: {
@@ -57,6 +65,20 @@ export default {
     explorer
   },
   methods: {
+    indentCode(e, $event){
+      this.code = prettier.format(e, {
+         parser: "html",
+         printWidth: 300,
+         plugins: [htmlPrettier],
+         });
+      $($event.target).addClass('animated heartBeat')
+      setTimeout(function(){
+        $($event.target).removeClass('animated heartBeat')
+      }, 2000)
+    },
+    toggleExplorerr(){
+      this.toggleExplorer = (this.toggleExplorer)?false:true;
+    },
     optimizeNews(){
       this.code = yud.cleanNews(this.code)
     },
@@ -161,7 +183,8 @@ export default {
     }
   },
   mounted() {
-    this.loadExports()
+    this.loadExports(),
+    $.codemi = this.$refs.codeinstance.codemirror
   },
   watch:{
     code(){

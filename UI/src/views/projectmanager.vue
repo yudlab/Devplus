@@ -1,8 +1,7 @@
 <template>
   <div class="pman">
     <pid @pidChanged="pidChangedHandler"/>
-    <createnews
-                :nldata="nldata"
+    <createnews :nldata="nldata"
                  v-if="currentPid"
                  @newsDataChange="newsDataHandler"/>
     <a class="path"
@@ -41,6 +40,7 @@ export default {
     pidChangedHandler(value) {
       this.currentPid = this.nldata.currentPid = value;
       this.baseURL = this.currentPid.baseURI;
+      window.newsData = value;
     },
     newsDataHandler(value) {
       this.newsData = value;
