@@ -10,6 +10,7 @@
 </template>
 <style src="./assets/css/all.css"></style>
 <style src="./assets/css/animate.css"></style>
+<style src="./assets/cursors/cursors.css"></style>
 <style lang="scss">
 @font-face { 
     font-family: 'integral'; 

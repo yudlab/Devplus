@@ -1,3 +1,22 @@
-.cur-unavailable {
-    cursor: url('/unavailable.cur');
+* {
+	cursor: url(png/pointer.png), pointer !important;
+}
+
+textarea,
+input[type="text"] {
+    cursor: url(png/text.png), text !important;
+}
+
+a,
+label,
+button, 
+input[type="radio"], 
+input[type="submit"], 
+input[type="checkbox"] {
+	cursor: url(png/pointer.png), pointer !important;
+}
+
+button[disabled], 
+input[disabled] {
+	cursor: url(png/unavailable.png), pointer !important;
 }

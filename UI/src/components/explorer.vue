@@ -16,13 +16,16 @@
                          v-bind:key="a"
                          v-for="(b, a) in data">
                         <input v-if="b[0]=='folder'||b[0]=='file'"
+                               :checked="(ftpData.includes(b[1]))?'checked':''"
                                type="checkbox"
                                :value="b[1]"
                                @change="fileSelection"
                                class="ftpCheck"/>
                         <i class="fas"
                            @click="openHandler(b[0], b[1])"
-                           :class="(b[0]=='file'||b[0]=='folder')?(b[0]=='file')?'fa-file-alt':'fa-folder':'fa-file'"></i>{{b[1].replace(navAddress+'\\', '')}}
+                           :class="(b[0]=='file'||b[0]=='folder')?(b[0]=='file')?'fa-file-alt':'fa-folder':'fa-file'">
+                           <div>{{b[1].replace(navAddress+'\\', '')}}</div>
+                        </i>
                     </div>
 
                 </div>
@@ -308,17 +311,24 @@ export default {
 
 
                 .box {
-                    cursor: pointer;
                     margin: 9px;
                     height: 35px;
-                    font-size: 14px;
                     display: flex;
                     justify-content: flex-start;
                     align-items: center;
 
                     i {
-                        padding: 0 13px;
-                        font-size: 20px;
+                        font-size: 21px;
+                        display: flex;
+                        align-content: center;
+                        cursor: pointer;
+
+                        div {
+                            font-family: brownprolight;
+                            font-size: 16px;
+                            padding-left: 10px;
+                            line-height: 20px;
+                        }
                     }
 
                     &:hover {
@@ -331,6 +341,7 @@ export default {
                         height: 18px;
                         width: 18px;
                         background-color: #eee;
+                        margin: 0 20px 0 10px;
                     }
                 }
             }
