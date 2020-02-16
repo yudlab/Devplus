@@ -6,7 +6,7 @@
                  @newsDataChange="newsDataHandler"/>
     <a class="path"
          v-if="currentPid && newsData"
-         @click="openExplorer">Will be saved in: {{currentWd}}</a>
+         @click="openExplorer(currentWd)">Will be saved in: {{currentWd}}</a>
   </div>
 </template>
 
@@ -46,7 +46,7 @@ export default {
       this.newsData = value;
       this.currentWd = `${this.currentPid.nlWorkingDir}S${this.newsData.week}\\${this.newsData.cmpid}\\`;
     },
-    openExplorer() {
+    openExplorer(e) {
       $.ajax({
         type: 'POST',
         // make sure you respect the same origin policy with this url:
@@ -55,7 +55,7 @@ export default {
         contentType: 'application/json',
         data: JSON.stringify({
           data: {
-            cwd: this.currentWd,
+            cwd: e,
           },
         }),
         success(msg) {
