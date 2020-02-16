@@ -7,7 +7,7 @@
       <div class="fas fa-code" @click="optimizeNews"></div>
       <div class="fas fa-language" @click="entitize"></div>
       <div class="fas fa-sort-amount-down-alt" @click="indentCode(code, $event)"></div>
-      <div class="fas fa-envelope"></div>
+      <div class="fas fa-envelope" @contextmenu.prevent="showContextMenu()" @click="sendMail"></div>
       <div class="fas fa-envelope-open-text"></div>
       <div class="fas fa-file-upload"></div>
       <div class="fas fa-folder" @click="toggleExplorerr"></div>
@@ -39,6 +39,7 @@ import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/lucario.css';
 import explorer from '@/components/explorer.vue';
 import * as yud from '../assets/js/yud';
+import * as emailSettings from '../assets/js/mail/settings/mail';
 import prettier from 'prettier/standalone';
 import htmlPrettier from "prettier/parser-html";
 export default {
@@ -58,6 +59,9 @@ export default {
       editorFile: '',
       filename: '\\visu.html',
       toggleExplorer: true,
+      mailTarget: '',
+      contextMenuWidth: null,
+      contextMenuHeight: null
     };
   },
   components: {
@@ -65,6 +69,62 @@ export default {
     explorer
   },
   methods: {
+    showContextMenu: ($event) => {
+      var menu = document.getElementById("context-menu");
+      if(!this.contextMenuWidth || !this.contextMenuHeight) {
+        menu.style.visibility = "hidden";
+        menu.style.display = "block";
+        this.contextMenuWidth = menu.offsetWidth;
+        this.contextMenuHeight = menu.offsetHeight;
+        menu.removeAttribute("style");
+      }
+
+      if((this.contextMenuWidth + vm.$event.pageX) >= window.innerWidth) {
+        menu.style.left = (vm.$event.pageX - this.contextMenuWidth) + "px";
+      } else {
+        menu.style.left = vm.$event.pageX + "px";
+      }
+
+      if((this.contextMenuHeight + vm.$event.pageY) >= window.innerHeight) {
+        menu.style.top = (vm.$event.pageY - this.contextMenuHeight) + "px";
+      } else {
+        menu.style.top = vm.$event.pageY + "px";
+      }
+      
+      menu.classList.add('active');
+    },
+    hideContextMenu: () => {
+      document.getElementById("context-menu").classList.remove('active');
+    },
+    showMailList($event){
+      
+    },
+    sendMail(to){
+      if(this.code!=''&&''!=this.mailTarget){
+        $.ajax({
+              type: 'POST',
+              // make sure you respect the same origin policy with this url:
+              // http://en.wikipedia.org/wiki/Same_origin_policy
+              url: 'http://127.0.0.1:3000/gmail-send',
+              contentType: 'application/json',
+              data: JSON.stringify({
+                data: {
+                    from: e,
+                    to: to,
+                    subject: e,
+                    html: e,
+                    text: e
+                },
+              }),
+              success(msg) {
+                console.log("Success @ fetchExport->Editor")
+                _this.code = msg
+              },
+          })
+      } else {
+        console.error('Won\'t send empty mail.')
+      }
+    },
     indentCode(e, $event){
       this.code = prettier.format(e, {
          parser: "html",

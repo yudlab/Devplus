@@ -201,15 +201,15 @@ app.post('/fs-save',function(req,res){
     }
 });
 app.post('/gmail-send',function(req,res){
-    if(typeof req.body.to == 'undefined' || req.body.to == ''){
+    if(typeof req.body.data.to == 'undefined' || req.body.data.to == ''){
         res.sendStatus(400)
         return;
     }
-    var to = req.body.to
-    var from = (req.body.from!=='')?req.body.from:'Nodemailer'
-    var subject = (req.body.subject!=='')?req.body.subject:'NO SUBJECT'
-    var text = (req.body.text!=='')?req.body.text:'NO TEXT'
-    var html = (req.body.html!=='')?req.body.html:'NO HTML'
+    var to = req.body.data.to
+    var from = (req.body.data.from!=='')?req.body.data.from:'Nodemailer'
+    var subject = (req.body.data.subject!=='')?req.body.data.subject:'NO SUBJECT'
+    var text = (req.body.data.text!=='')?req.body.data.text:'NO TEXT'
+    var html = (req.body.data.html!=='')?req.body.data.html:'NO HTML'
     var transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
         secure: true,
