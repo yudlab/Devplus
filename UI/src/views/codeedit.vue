@@ -1,5 +1,5 @@
 <template>
-  <div class="code">
+  <div class="code" @click="hideContextMenu">
     <div id="file-operations">
       <div class="fas fa-eraser" @click="clear"></div>
       <div id="fa-save" class="fas fa-save" @click="fsSave"></div>
@@ -7,15 +7,10 @@
       <div class="fas fa-code" @click="optimizeNews"></div>
       <div class="fas fa-language" @click="entitize"></div>
       <div class="fas fa-sort-amount-down-alt" @click="indentCode(code, $event)"></div>
-      <div class="fas fa-envelope" @contextmenu.prevent="showContextMenu()" @click="sendMail"></div>
+      <div id="sendmail" class="fas fa-envelope" @contextmenu.prevent="showMailTarget()" @click="sendMail(defaultEmail)"></div>
       <div class="fas fa-envelope-open-text"></div>
       <div class="fas fa-file-upload"></div>
       <div class="fas fa-folder" @click="toggleExplorerr"></div>
-      <div class="fas fa-code" @click="indentCode"></div>
-      <div class="fas fa-"></div>
-      <div class="fas fa-"></div>
-      <div class="fas fa-"></div>
-      <div class="fas fa-"></div>
     </div>
     <explorer @loadContent="loadContent"
               id="explorer"
@@ -26,6 +21,19 @@
       :options="cmOptions"
       ref="codeinstance">
     </codemirror>
+    <div id="emailList">
+      <ul>
+        <li v-for="a in emailList" v-bind:key="a.id" @click="sendMail(a.emails)">{{a.name}}</li>
+      </ul>
+    </div>
+    <table id="htmlErr">
+      <tr v-for="a in htmlErr" v-bind:key="a[0]">
+        <td>{{a[0]}}</td>
+        <td>{{a[2]}}</td>
+        <td>{{a[1]}}</td>
+        <td>{{a[3]}}</td>
+      </tr>
+    </table>
   </div>
 </template>
 
@@ -59,9 +67,11 @@ export default {
       editorFile: '',
       filename: '\\visu.html',
       toggleExplorer: true,
-      mailTarget: '',
-      contextMenuWidth: null,
-      contextMenuHeight: null
+      defaultEmail: emailSettings.emailList.me.emails,
+      emailList: emailSettings.emailList,
+      newsData: JSON.parse(sessionStorage.getItem('newsData')),
+      htmlErr: ''
+
     };
   },
   components: {
@@ -69,60 +79,61 @@ export default {
     explorer
   },
   methods: {
-    showContextMenu: ($event) => {
-      var menu = document.getElementById("context-menu");
-      if(!this.contextMenuWidth || !this.contextMenuHeight) {
-        menu.style.visibility = "hidden";
-        menu.style.display = "block";
-        this.contextMenuWidth = menu.offsetWidth;
-        this.contextMenuHeight = menu.offsetHeight;
-        menu.removeAttribute("style");
-      }
-
-      if((this.contextMenuWidth + vm.$event.pageX) >= window.innerWidth) {
-        menu.style.left = (vm.$event.pageX - this.contextMenuWidth) + "px";
-      } else {
-        menu.style.left = vm.$event.pageX + "px";
-      }
-
-      if((this.contextMenuHeight + vm.$event.pageY) >= window.innerHeight) {
-        menu.style.top = (vm.$event.pageY - this.contextMenuHeight) + "px";
-      } else {
-        menu.style.top = vm.$event.pageY + "px";
-      }
-      
-      menu.classList.add('active');
-    },
     hideContextMenu: () => {
-      document.getElementById("context-menu").classList.remove('active');
+      $('#emailList').css('display', 'none')
     },
-    showMailList($event){
-      
+    showMailTarget: ($event) => {
+      $('#emailList').css('display', 'block')
+      $('#emailList').css('top', event.clientY)
+      $('#emailList').css('left', event.clientX)
     },
     sendMail(to){
-      if(this.code!=''&&''!=this.mailTarget){
+      var parser = new DOMParser()
+      var doc = parser.parseFromString(this.code, "text/html")
+      if(doc.querySelector('title')){
+        var title = doc.querySelector('title')
+      } else {
+        var title = "No subject"
+      }
+      var _this = this
+      if(this.code!=''&&''!=to){
         $.ajax({
-              type: 'POST',
-              // make sure you respect the same origin policy with this url:
-              // http://en.wikipedia.org/wiki/Same_origin_policy
-              url: 'http://127.0.0.1:3000/gmail-send',
-              contentType: 'application/json',
-              data: JSON.stringify({
-                data: {
-                    from: e,
-                    to: to,
-                    subject: e,
-                    html: e,
-                    text: e
-                },
-              }),
-              success(msg) {
-                console.log("Success @ fetchExport->Editor")
-                _this.code = msg
+            type: 'POST',
+            // make sure you respect the same origin policy with this url:
+            // http://en.wikipedia.org/wiki/Same_origin_policy
+            url: 'http://127.0.0.1:3000/gmail-send',
+            contentType: 'application/json',
+            data: JSON.stringify({
+              data: {
+                  from: 'Yud',
+                  to: to,
+                  subject: title,
+                  html: _this.code,
+                  text: ''
               },
+            }),
+            success(msg) {
+              console.log("Request sent to endpoint. RES-> ", msg)
+              if(typeof msg == "object" && msg.rejected.length == 0 && msg.response !== ""){
+                $('#sendmail').addClass('success')
+                  setTimeout(function(){
+                    $('#sendmail').removeClass('success')
+                  }, 5000)
+              } else {
+                console.error("Email not sent: -> ", msg)
+                $('#sendmail').addClass('failed')
+                setTimeout(function(){
+                  $('#sendmail').removeClass('failed')
+                }, 5000)
+              }
+            },
           })
       } else {
-        console.error('Won\'t send empty mail.')
+        console.error('Nothing to send or empty recipient.')
+        $('#sendmail').addClass('failed')
+        setTimeout(function(){
+          $('#sendmail').removeClass('failed')
+        }, 5000)
       }
     },
     indentCode(e, $event){
@@ -140,7 +151,7 @@ export default {
       this.toggleExplorer = (this.toggleExplorer)?false:true;
     },
     optimizeNews(){
-      this.code = yud.cleanNews(this.code)
+      this.code = yud.cleanNews(this.code, this.newsData.newsdata.currentPid.tracking, this.newsData.cmpid)
     },
     copyToClipboard: function ($event){
       yud.copyToClipboard(this.code)
@@ -249,11 +260,47 @@ export default {
   watch:{
     code(){
       this.updateEditor()
+      this.htmlErr = yud.tagsCheck(this.code, this.newsData.newsdata.currentPid.siteBaseURL, this.newsData.newsdata.currentPid.tracking.replace("<<cmpid>>", this.newsData.cmpid))
     },
   }
 };
 </script>
-<style lang="scss"> 
+<style lang="scss">
+#htmlErr {
+  position: fixed;
+  top: 25px;
+  right: 15px;
+  color: #e74c3c;
+  font-size: 12px;
+}
+#emailList {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 40%;
+  border: 1px solid #2ecc71;
+  background-color: #FFFFFF;
+  z-index: 999999;
+
+  ul {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    padding: 0 15px;
+    li {
+      list-style: none;
+      width: 100%;
+      margin-bottom: 5px;
+      padding: 2px;
+      &:hover {
+        background-color: #2ecc71;
+        color: white;
+      }
+    }
+  }
+}
 .success {
   border-bottom: 2px solid #2ecc71;
   color: #2ecc71;

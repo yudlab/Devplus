@@ -228,6 +228,7 @@ app.post('/gmail-send',function(req,res){
     }
     transporter.sendMail(mailOptions, function (err, info) {
         if(err){
+          console.log("error sending mail.")
           res.send(err)
         } else
           res.send(info)

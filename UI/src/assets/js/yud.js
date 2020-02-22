@@ -1,6 +1,8 @@
 
-export function tagsCheck(input) {
-    tags = [["<img", "alt=", 0, 0],["<td", '" valign="', 0, 0],["<img", 'border="0" style="', 0, 0],["href=", 'target="_blank"', 0, 0],["<a", "</a>", 0, 0],["<abbr", "</abbr>", 0, 0],["<acronym", "</acronym>", 0, 0],["<address", "</address>", 0, 0],["<applet", "</applet>", 0, 0],["<area", "</area>", 0, 0],["<article", "</article>", 0, 0],["<aside", "</aside>", 0, 0],["<audio", "</audio>", 0, 0],["<base", "</base>", 0, 0],["<basefont", "</basefont>", 0, 0],["<bdo", "</bdo>", 0, 0],["<big", "</big>", 0, 0],["<blockquote", "</blockquote>", 0, 0],["<body", "</body>", 0, 0],["<button", "</button>", 0, 0],["<canvas", "</canvas>", 0, 0],["<caption", "</caption>", 0, 0],["<center", "</center>", 0, 0],["<cite", "</cite>", 0, 0],["<code", "</code>", 0, 0],["<col", "</col>", 0, 0],["<colgroup", "</colgroup>", 0, 0],["<datalist", "</datalist>", 0, 0],["<dd", "</dd>", 0, 0],["<del", "</del>", 0, 0],["<dfn", "</dfn>", 0, 0],["<div", "</div>", 0, 0],["<dl", "</dl>", 0, 0],["<dt", "</dt>", 0, 0],["<embed", "</embed>", 0, 0],["<fieldset", "</fieldset>", 0, 0],["<figcaption", "</figcaption>", 0, 0],["<figure", "</figure>", 0, 0],["<font", "</font>", 0, 0],["<footer", "</footer>", 0, 0],["<form", "</form>", 0, 0],["<frame", "</frame>", 0, 0],["<frameset", "</frameset>", 0, 0],["<head", "</head>", 0, 0],["<header", "</header>", 0, 0],["<h1", "</h1>", 0, 0],["<html", "</html>", 0, 0],["<i ", "</i>", 0, 0],["<iframe", "</iframe>", 0, 0],["<input", "</input>", 0, 0],["<ins", "</ins>", 0, 0],["<kbd", "</kbd>", 0, 0],["<label", "</label>", 0, 0],["<legend", "</legend>", 0, 0],["<main", "</main>", 0, 0],["<map", "</map>", 0, 0],["<mark", "</mark>", 0, 0],["<meter", "</meter>", 0, 0],["<nav", "</nav>", 0, 0],["<noscript", "</noscript>", 0, 0],["<object", "</object>", 0, 0],["<ol", "</ol>", 0, 0],["<optgroup", "</optgroup>", 0, 0],["<option", "</option>", 0, 0],["<p", "</p>", 0, 0],["<param", "</param>", 0, 0],["<pre", "</pre>", 0, 0],["<progress", "</progress>", 0, 0],["<samp", "</samp>", 0, 0],["<script", "</script>", 0, 0],["<section", "</section>", 0, 0],["<select", "</select>", 0, 0],["<small", "</small>", 0, 0],["<source", "</source>", 0, 0],["<span", "</span>", 0, 0],["<strike", "</strike>", 0, 0],["<strong", "</strong>", 0, 0],["<style", "</style>", 0, 0],["<sub", "</sub>", 0, 0],["<sup", "</sup>", 0, 0],["<table", "</table>", 0, 0],["<tbody", "</tbody>", 0, 0],["<td", "</td>", 0, 0],["<textarea", "</textarea>", 0, 0],["<tfoot", "</tfoot>", 0, 0],["<th", "</th>", 0, 0],["<thead", "</thead>", 0, 0],["<time", "</time>", 0, 0],["<title", "</title>", 0, 0],["<tr", "</tr>", 0, 0],["<ul", "</ul>", 0, 0],["<var", "</var>", 0, 0],["<video", "</video>", 0, 0],["<wbr", "</wbr>", 0, 0]];
+export function tagsCheck(input, siteurl, tracking) {
+    var tags, tagsErr, result1, result2, count1, count2
+    tags = [[siteurl, tracking, 0, 0], ["<img", "alt=", 0, 0],["<td", '" valign="', 0, 0],["<img", 'border="0" style="', 0, 0],["href=", 'target="_blank"', 0, 0],["<a", "</a>", 0, 0],["<abbr", "</abbr>", 0, 0],["<acronym", "</acronym>", 0, 0],["<address", "</address>", 0, 0],["<applet", "</applet>", 0, 0],["<area", "</area>", 0, 0],["<article", "</article>", 0, 0],["<aside", "</aside>", 0, 0],["<audio", "</audio>", 0, 0],["<base", "</base>", 0, 0],["<basefont", "</basefont>", 0, 0],["<bdo", "</bdo>", 0, 0],["<big", "</big>", 0, 0],["<blockquote", "</blockquote>", 0, 0],["<body", "</body>", 0, 0],["<button", "</button>", 0, 0],["<canvas", "</canvas>", 0, 0],["<caption", "</caption>", 0, 0],["<center", "</center>", 0, 0],["<cite", "</cite>", 0, 0],["<code", "</code>", 0, 0],["<col", "</col>", 0, 0],["<colgroup", "</colgroup>", 0, 0],["<datalist", "</datalist>", 0, 0],["<dd", "</dd>", 0, 0],["<del", "</del>", 0, 0],["<dfn", "</dfn>", 0, 0],["<div", "</div>", 0, 0],["<dl", "</dl>", 0, 0],["<dt", "</dt>", 0, 0],["<embed", "</embed>", 0, 0],["<fieldset", "</fieldset>", 0, 0],["<figcaption", "</figcaption>", 0, 0],["<figure", "</figure>", 0, 0],["<font", "</font>", 0, 0],["<footer", "</footer>", 0, 0],["<form", "</form>", 0, 0],["<frame", "</frame>", 0, 0],["<frameset", "</frameset>", 0, 0],["<head", "</head>", 0, 0],["<header", "</header>", 0, 0],["<h1", "</h1>", 0, 0],["<html", "</html>", 0, 0],["<i ", "</i>", 0, 0],["<iframe", "</iframe>", 0, 0],["<input", "</input>", 0, 0],["<ins", "</ins>", 0, 0],["<kbd", "</kbd>", 0, 0],["<label", "</label>", 0, 0],["<legend", "</legend>", 0, 0],["<main", "</main>", 0, 0],["<map", "</map>", 0, 0],["<mark", "</mark>", 0, 0],["<meter", "</meter>", 0, 0],["<nav", "</nav>", 0, 0],["<noscript", "</noscript>", 0, 0],["<object", "</object>", 0, 0],["<ol", "</ol>", 0, 0],["<optgroup", "</optgroup>", 0, 0],["<option", "</option>", 0, 0],["<p", "</p>", 0, 0],["<param", "</param>", 0, 0],["<pre", "</pre>", 0, 0],["<progress", "</progress>", 0, 0],["<samp", "</samp>", 0, 0],["<script", "</script>", 0, 0],["<section", "</section>", 0, 0],["<select", "</select>", 0, 0],["<small", "</small>", 0, 0],["<source", "</source>", 0, 0],["<span", "</span>", 0, 0],["<strike", "</strike>", 0, 0],["<strong", "</strong>", 0, 0],["<style", "</style>", 0, 0],["<sub", "</sub>", 0, 0],["<sup", "</sup>", 0, 0],["<table", "</table>", 0, 0],["<tbody", "</tbody>", 0, 0],["<td", "</td>", 0, 0],["<textarea", "</textarea>", 0, 0],["<tfoot", "</tfoot>", 0, 0],["<th", "</th>", 0, 0],["<thead", "</thead>", 0, 0],["<time", "</time>", 0, 0],["<title", "</title>", 0, 0],["<tr", "</tr>", 0, 0],["<ul", "</ul>", 0, 0],["<var", "</var>", 0, 0],["<video", "</video>", 0, 0],["<wbr", "</wbr>", 0, 0]];
+    tagsErr = new Array
     for (var i = 0; i < tags.length; i++) {
         var regfilter1 = new RegExp(tags[i][0], "gmiu")
         var regfilter2 = new RegExp(tags[i][1], "gmiu")
@@ -19,7 +21,12 @@ export function tagsCheck(input) {
             result2 = regfilter2.exec(input)
         }
     }
-    return tags
+    for (var j = 0; j < tags.length; j++) {
+        if(tags[j][2]!==tags[j][3]){
+            tagsErr.push(tags[j])
+        }
+    }
+    return tagsErr
 }
 
 export function htmlEscape(input) {
@@ -107,13 +114,9 @@ export function copyToClipboard(str) {
     document.body.removeChild(el)
 }
 
-export function cleanNews(e, f) {
-    // f = obj -> {
-    // siteurl
-    //
-    //}
+export function cleanNews(html, tracking, cmpid) {
     var parser = new DOMParser()
-    var doc = parser.parseFromString(e, "text/html")
+    var doc = parser.parseFromString(html, "text/html")
     var tables = doc.querySelectorAll('table')
     tables.forEach(table => {
         $(table).removeAttr('style')
@@ -147,14 +150,26 @@ export function cleanNews(e, f) {
         var title = $(titles).attr('alt')
         $(a).attr('title', title)
         $(a).attr('target', '_blank')
-        var thislink = $(a).attr('href')
-        thislink = thislink + '?tracking=blablabli&test=ok'
-        $(a).attr('href', thislink)
+        var link = $(a).attr('href')
+        if(!link.includes(tracking.replace(/<<cmpid>>/gmui, cmpid))){
+            if(link.includes('?')){
+                var tracker = '&'+tracking
+            } else {
+                var tracker = '?'+tracking
+            }
+            if(link.includes('#')){
+                link = [link.slice(0, link.indexOf('#')), tracker, link.slice(link.indexOf('#'))].join('');
+            } else {
+                link = link+tracker
+            }
+        }
+        $(a).attr('href', link)
     })
     $(doc.querySelector("table")).removeAttr('style')
     var html = doc.querySelector("table").outerHTML
     console.log(html)
     html = html.replace(/<tbody>|<\/tbody>/gmui, "")
+    html = html.replace(/<<cmpid>>/gmui, cmpid)
     return this.entitizer('encode', this.escapeHtml(html))
 }
 

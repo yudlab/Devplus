@@ -6,6 +6,7 @@
 		"ftpNewsPath": "http://img.tati.fr/news",
 		"templateRoot": "C:\\www\\dev-plus\\SERVER\\folders\\_NEWSLETTER\\img.tati.fr\\_template",
 		"nlWorkingDir": "C:\\www\\test\\",
+		"tracking": "test=ok&ref=okkkkk&cmpid=<<cmpid>>",
 		"newsletterTypes": {
 			"default": "nl_template_default_2018",
 			"carte": "nl_template_carte_2018",

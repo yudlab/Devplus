@@ -1,29 +1,17 @@
-export var emailList = {
+export const emailList = {
 	"me": {
 		"id": "1",
-		"name": "Yud",
-        "emails": {
-            "email": "wp.yudish@gmail.com",
-            "email": "test@example.org",
-            "email": "test1@yahoo.com"
-        }
+		"name": "Me",
+        "emails": ["wp.yudish@gmail.com", "test@example.org", "test1@yahoo.com"]
     },
     "myself": {
-        "id": "2",
-		"name": "myself",
-        "emails": {
-            "email": "wp.yudish@gmail.com",
-            "email": "test@example.org",
-            "email": "test1@yahoo.com"
-        }
+		"id": "2",
+		"name": "Yud",
+        "emails": ["wp.yudish@gmail.com", "test@example.org", "test1@yahoo.com"]
     },
     "I": {
-        "id": "3",
-		"name": "I",
-        "emails": {
-            "email": "wp.yudish@gmail.com",
-            "email": "test@example.org",
-            "email": "test1@yahoo.com"
-        }
-    }
+		"id": "3",
+		"name": "Aieee",
+        "emails": ["wp.yudish@gmail.com", "test@example.org", "test1@yahoo.com"]
+    },
 }
