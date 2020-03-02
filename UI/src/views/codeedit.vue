@@ -151,7 +151,7 @@ export default {
       this.toggleExplorer = (this.toggleExplorer)?false:true;
     },
     optimizeNews(){
-      this.code = yud.cleanNews(this.code, this.newsData.newsdata.currentPid.tracking, this.newsData.cmpid)
+      this.code = yud.cleanNews(this.code)
     },
     copyToClipboard: function ($event){
       yud.copyToClipboard(this.code)
@@ -256,11 +256,12 @@ export default {
   mounted() {
     this.loadExports(),
     $.codemi = this.$refs.codeinstance.codemirror
+    document.documentElement.requestFullscreen()
   },
   watch:{
     code(){
       this.updateEditor()
-      this.htmlErr = yud.tagsCheck(this.code, this.newsData.newsdata.currentPid.siteBaseURL, this.newsData.newsdata.currentPid.tracking.replace("<<cmpid>>", this.newsData.cmpid))
+      this.htmlErr = yud.tagsCheck(this.code)
     },
   }
 };
