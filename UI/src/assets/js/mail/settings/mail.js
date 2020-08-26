@@ -1,17 +1,22 @@
 export const emailList = {
 	"me": {
 		"id": "1",
-		"name": "Me",
-        "emails": ["wp.yudish@gmail.com", "test@example.org", "test1@yahoo.com"]
+		"name": "Me only",
+        "emails": ["wp.yudish@gmail.com", "ya@wshop-cloudcommerce.com"]
     },
-    "myself": {
+    "kb": {
 		"id": "2",
-		"name": "Yud",
-        "emails": ["wp.yudish@gmail.com", "test@example.org", "test1@yahoo.com"]
+		"name": "@KB",
+        "emails": ["wp.kishta@gmail.com", "kb@wshop-cloudcommerce.com"]
     },
-    "I": {
+    "sfr": {
 		"id": "3",
-		"name": "Aieee",
-        "emails": ["wp.yudish@gmail.com", "test@example.org", "test1@yahoo.com"]
+		"name": "@SFR",
+        "emails": ["wpmu.stephan@gmail.com", "sfr@wshop-cloudcommerce.com"]
     },
+	"jm": {
+		"id": "4",
+		"name": "@JM",
+        "emails": ["wp.jessigen@gmail.com", "jm@wshop-cloudcommerce.com"]
+    }
 }

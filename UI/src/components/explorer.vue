@@ -67,8 +67,6 @@ export default {
             var _this = this
             $.ajax({
                 type: 'POST',
-                // make sure you respect the same origin policy with this url:
-                // http://en.wikipedia.org/wiki/Same_origin_policy
                 url: 'http://127.0.0.1:3000/read-exports',
                 contentType: 'application/json',
                 data: JSON.stringify({
@@ -88,8 +86,6 @@ export default {
     if (dir) {
         $.ajax({
         type: 'POST',
-        // make sure you respect the same origin policy with this url:
-        // http://en.wikipedia.org/wiki/Same_origin_policy
         url: 'http://127.0.0.1:3000/getpath',
         data: {
             dir,

@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div>
-      DASHBOARD :D
+      <strong>ON HEAVY DEVELOPMENT!</strong>
     </div>
 
   </div>
