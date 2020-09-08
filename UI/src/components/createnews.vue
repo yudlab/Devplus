@@ -1,19 +1,40 @@
 <template>
     <div>
+      <!--pre class="debug">{{a}}</pre-->
         <div id="createnews" class="createnews animated fadeIn delay-1s">
-            <!--input v-model="cwd.path" v-on:change="scanDir(cwd.path)" name="path" type="text" placeholder="path"-->
             <div class="itm1">
+              <a class="path"
+                v-if="cpd"
+                @click="openExplorer(cpd)">Will be saved in:<br>{{cpd}}</a>
                 <div class="primary">
-                    <input id="cmpid"
-                           v-model.lazy="cmpid"
-                           name="cmpid"
-                           type="text"
-                           placeholder="cmpid">
-                    <div class="secondary" v-if="cmpid.length > 7">
-                        <input v-model.lazy="tracking" name="tracking" type="text" placeholder="tracking">
-                        <input v-model="date" name="date" type="text" placeholder="date">
-                        <input v-if="lang" v-model="lang" name="lang" type="text" placeholder="lang">
-                    </div>
+                  <select class="pid-select"
+                          v-model="a"
+                          >
+                    <option v-for="pid in pids"
+                            v-bind:key="pid.id"
+                            v-bind:value="pid">{{pid.name}}
+                    </option>
+                  </select>
+                  <select class="pid-select nltype-select"
+                    v-if="a.newsletterTypes"
+                    v-model="newsletterType"
+                    :disabled="Object.keys(this.a.newsletterTypes).length==1">
+                    <option v-for="nlType in a.newsletterTypes"
+                            v-bind:key="nlType.path"
+                            v-bind:value="nlType">{{nlType.path}}
+                    </option>
+                  </select>
+                  <input id="cmpid"
+                          v-model.lazy="cmpid"
+                          name="cmpid"
+                          type="text"
+                          placeholder="cmpid">
+                  <div class="secondary" v-if="cmpid.length > 7">
+                      <input v-model="tracking" name="tracking" type="text" placeholder="tracking">
+                      <input v-model="trackingLink" name="trackingLink" type="text" placeholder="trackingLink">
+                      <input v-model="date" name="date" type="text" placeholder="date">
+                      <input v-if="lang" v-model="lang" name="lang" type="text" placeholder="lang">
+                  </div>
                 </div>
 
                 <div class="secondary" v-if="cmpid.length > 7">
@@ -33,8 +54,7 @@
                         @click="clearMsg"></div>
                 </div>
             </div>
-            <div id="nldata" style="display: none">{{newsdata.currentPid.baseURL}}</div>
-            <!--<table>
+            <table>
               <tr>
                 <td>preheader text</td>
                 <td>- {{preheader_text}}</td>
@@ -67,31 +87,48 @@
                 <td>tracking</td>
                 <td>- {{tracking}}</td>
               </tr>
-            </table>-->
-            {{$data}}
+              <tr>
+                <td>trackingLink</td>
+                <td>- {{trackingLink}}</td>
+              </tr>
+              <tr>
+                <td>newsletterType</td>
+                <td>- {{newsletterType.path}}</td>
+              </tr>
+              <tr>
+                <td>templateSrc</td>
+                <td>- {{templateSrc}}</td>
+              </tr>
+            </table>
         </div>
     </div>
 </template>
 
 
 <script>
-// import axios from 'axios';
+import axios from 'axios';
 // import qs from 'qs';
 export default {
   data() {
     return {
-      cmpid: 'nl_test_20190101',
+      cmpid: 'nl_test_20200101',
+      currentPid: '',
       date: '',
-      preheader_text: '',
+      preheader_text: '***preheader text***',
       preheader_link: '',
-      subject: '',
-      ml: '',
+      subject: '***subject***',
+      ml: '*mention legales .....',
       tracking: '',
+      trackingLink: '',
       lang: '',
       week: '',
       folderAvailable: true,
-      newsdata: this.nldata,
       cpd: '',
+      newsletterType: '',
+      templateSrc: '',
+      pids: 'need fetch...',
+      a: 'need fetch...',
+      obj: {},
     };
   },
   methods: {
@@ -126,6 +163,7 @@ export default {
         return e.replace(regexp, "")
     },
     scanDir(dir) {
+      var _this = this
       if (dir) {
         $.ajax({
           type: 'POST',
@@ -137,40 +175,14 @@ export default {
           },
           success(msg) {
             console.log('Res from AJAX: ', msg)
-            $('#projectStatus').html(msg)
-            $('#projectStatus').css('display', 'flex')
             console.log('dir @ scanDir(dir): ', dir)
-            $('#cmpid-label').css('display', 'block')
-            switch (msg) {
-              case '-4048':
-                console.log('No perm')
-                sessionStorage.setItem('cpd', '403')
-                $('#cmpid').removeClass('ok')
-                $('#cmpid').addClass('na')
-                return 403
-                break
-              case '-4058':
-                console.log('Not found')
-                sessionStorage.setItem('cpd', '404')
-                $('#cmpid').removeClass('na')
-                $('#cmpid').addClass('ok')
-                return 404
-                break
-              case '[]':
-                console.log('Empty')
-                sessionStorage.setItem('cpd', '204')
-                $('#cmpid').removeClass('ok')
-                $('#cmpid').addClass('na')
-                return 204
-                break
-              default:
-                console.log(msg)
-                $('#cmpid-label').css('color', '#e74c3c')
-                $('#output').html(msg)
-                sessionStorage.setItem('cpd', msg)
-                $('#cmpid').removeClass('ok')
-                $('#cmpid').addClass('na')
-                return JSON.stringify(msg)
+            console.log(msg)
+            _this.msg(msg)
+            //should be '[]' or -4058
+            if (msg=='[]' || msg=='-4058') {
+              $('#cmpid').removeClass('na').addClass('ok')
+            } else {
+              $('#cmpid').removeClass('ok').addClass('na')
             }
           },
         })
@@ -180,17 +192,7 @@ export default {
     },
     submit() {
       var _this = this
-      if (this.newsdata !== '') {
-        if (sessionStorage.getItem('task-status') === 'pending') {
-          this.msg('A task is already running...')
-          if(sessionStorage.getItem('task-msg') !==null || sessionStorage.getItem('task-msg') !=='') {
-            setTimeout(() => {
-            this.msg(sessionStorage.getItem('task-msg'))
-            }, 3000)
-          }
-          return
-        }
-        this.$emit('newsDataChange', this.$data)
+      if (typeof this.a.id != '') {
         $.ajax({
           type: 'POST',
           // make sure you respect the same origin policy with this url:
@@ -199,33 +201,28 @@ export default {
           contentType: 'application/json',
           data: JSON.stringify({
             data: {
-              folderData: this.cpd,
-              newsData: this.newsdata,
-              week: this.week,
+              templateSrc: this.templateSrc,
+              newsletterType: this.newsletterType.path,
+              tracking: this.tracking,
+              nlWorkingDir: this.a.nlWorkingDir,
+              cpd: this.cpd,
+              trackingLink: this.trackingLink,
+              trackingLinkSplio: this.trackingLink + "_$origin$_$suborigin$&tk=$token$",
+              preheader: this.preheader_text,
+              preheaderLink: this.preheader_link,
+              subject: this.subject,
+              ml: this.ml,
+              week: this.week
             },
           }),
           success(msg) {
             console.log('From AJAX @subimt->res : ', msg)
-            setTimeout(() => {
-              $('#projectStatus').html(msg)
-            }, 2000)
-            $('#projectStatus').css('display', 'flex')
-            if (msg == 'OK') {
-              $('#cmpid').removeClass('ok')
-              $('#cmpid').addClass('created')
-              _this.fsCopy()
-              sessionStorage.setItem('newsData', JSON.stringify(_this.$data))
-            } else {
-              $('#cmpid').removeClass('ok')
-              $('#cmpid').addClass('na')
-            }
+            $('#projectStatus').html(msg)
           },
         })
-        sessionStorage.setItem('task-status', 'pending')
-        $('#projectStatus').html('Waiting for exports...')
-        $('#submitnews').addClass('disabled animated infinite pulse')
       } else {
-        console.log('No path defined @ scanDir().')
+        _this.msg('Invalid data. Check console.')
+        console.error('Invalid data: this.a != Object \n'+ this.a)
       }
     },
     clearMsg() {
@@ -235,9 +232,6 @@ export default {
       $('#projectStatus').css('display', 'none')
       $('#projectStatus').html('')
     },
-    /*emit() {
-      this.$socket.emit('test', 'data')
-    },*/
     getDate(){
         var today = new Date()
         var dd = today.getDate()
@@ -253,17 +247,15 @@ export default {
     },
     fsCopy() {
       console.log("this.cpd-> ", this.cpd)
-      console.log("this.nldata.currentPid.templateRoot-> ", this.nldata.currentPid.templateRoot)
-      if (this.cpd !== '' && this.nldata.currentPid.templateRoot !=='') {
+      console.log("this.a.templateRoot-> ", this.a.templateRoot)
+      if (this.cpd !== '' && this.a.templateRoot !=='') {
         $.ajax({
           type: 'POST',
-          // make sure you respect the same origin policy with this url:
-          // http://en.wikipedia.org/wiki/Same_origin_policy
           url: 'http://127.0.0.1:3000/fs-copy',
           contentType: 'application/json',
           data: JSON.stringify({
             data: {
-              from: this.nldata.currentPid.templateRoot,
+              from: this.a.templateRoot,
               to: this.cpd
             },
           }),
@@ -281,29 +273,52 @@ export default {
           },
         })
       } else {
-        console.log('error copy @ this.nldata.currentPid.templateRoot-->  ', this.nldata.currentPid.templateRoot)
+        //console.log('error copy @ this.a.templateRoot-->  ', this.a.templateRoot)
       }
+    },
+    openExplorer(e) {
+      $.ajax({
+        type: 'POST',
+        url: 'http://127.0.0.1:3000/open',
+        contentType: 'application/json',
+        data: JSON.stringify({
+          data: {
+            cwd: e,
+          },
+        }),
+        success(msg) {
+          console.log('From AJAX @subimt->res : ', msg);
+          if (msg == '202') {
+            $('#cmpid').removeClass('ok');
+            $('#cmpid').addClass('created');
+          } else {
+            $('#cmpid').removeClass('ok');
+            $('#cmpid').addClass('na');
+          }
+        },
+      });
     },
   },
   props: {
-    nldata: {
-      type: Object,
-    },
+  },
+  created() {
+    axios
+      .get('http://127.0.0.1:3000/pids')
+      .then((res) => {
+        this.pids = res.data;
+      });
   },
   watch: {
+    a() {
+      //alert(this.a.newsletterTypes[Object.keys(this.a.newsletterTypes)])
+      if(Object.keys(this.a.newsletterTypes).length==1){
+        this.newsletterType = this.a.newsletterTypes[Object.keys(this.a.newsletterTypes)]
+      }
+      this.preheader_link = this.a.baseURL
+    },
     cmpid() {
-      this.folderIsAvailable = false
       this.cmpid = this.sanitize(this.cmpid)
-      this.tracking = this.cmpid
-      this.tracking = this.tracking.replace(/\s/gmui, "")
-      this.preheader_link = this.newsdata.currentPid.baseURL
-      const path = `${this.newsdata.currentPid.nlWorkingDir}S${this.week+'\\'+this.cmpid}`
-      console.log('Path-> ', path)
-      this.scanDir(path)
-      this.cpd = path
-      sessionStorage.setItem('editorFile', path+'\\visu.html')
-      sessionStorage.setItem('newsPath', path)
-      sessionStorage.setItem('task-status', 'undefined')
+      this.tracking = this.cmpid.replace(/\s/gmui, "")
       const mycmpidarr = this.cmpid.split('_')
       if (mycmpidarr.length == 3) {
         this.date = mycmpidarr[2]
@@ -311,23 +326,58 @@ export default {
         this.date = mycmpidarr[3]
         this.lang = mycmpidarr[2]
       } else {
-        console.log('Invalid date.')
-        return
+        alert('Invalid date.')
       }
       this.week = this.getWeek(this.date)
+      const path = `${this.a.nlWorkingDir}S${this.week+'\\'+this.cmpid}`
+      this.cpd = path
+      this.scanDir(path)
+      this.templateSrc = this.a.templateRoot+this.newsletterType.path
     },
     tracking() {
       this.tracking = this.tracking.replace(/\s/gmui, "")
+      this.trackingLink = this.newsletterType.tracking.replace("<<<CMPID>>>", this.tracking)
     },
   },
   mounted() {
     this.init()
-    sessionStorage.setItem('task-status', 'undefined')
   },
 }
 </script>
 
 <style lang="scss" scoped>
+    .debug {
+      position: fixed;
+      top: 100px;
+      left: 50px;
+      width: 400px;
+      color: blue;
+    }
+    .pid-select {
+      height: 40px;
+      width: 250px;
+      font-family: 'brownprolight';
+      font-size: 14px;
+      border: 2px solid #3498db;
+      padding-left: 15px;
+      height: 40px;
+      margin-bottom: 5px;
+      border-radius: 5px;
+      margin: 5px;
+      position: relative;
+    }
+    .pid {
+      background-color: #2c3e50;
+      color: #FFFFFF;
+      width: 100%;
+      height: 100%;
+    }
+    select {
+      border: 2px solid #FFFFFF;
+      border-radius: 5px;
+      height: 48px !important;
+      width: 271px !important;
+    }
     .next {
         display: flex;
         align-items: center;
@@ -391,6 +441,14 @@ export default {
         border-radius: 24px;
 
         .itm1 {
+            .path {
+              color: black !important;
+              cursor: pointer !important;
+              position: absolute;
+              top: -70px;
+              text-align: left;
+              width: 77%;
+            }
             width: 100%;
             display: flex;
             align-items: flex-start;
@@ -416,17 +474,20 @@ export default {
                 border-radius: 5px;
                 margin: 5px;
                 position: relative;
+                &:focus, &:active {
+                  border-color: transparent;
+                }
             }
             .primary {
                 padding-right: 10px;
                 .ok {
-                    border: 2px solid #f39c12;
+                    border: 2px solid #008035 !important;
                 }
                 .na {
-                    border: 2px solid #e74c3c;
+                    border: 2px solid #e74c3c !important;
                 }
                 .created {
-                    border: 2px solid #2ecc71;
+                    border: 2px solid #00ff6a !important;
                 }
             }
             .disabled {
@@ -438,14 +499,13 @@ export default {
           td {
             font-family: 'brownprolight';
             color: #000000;
-            font-size: 1.4rem;
+            font-size: 0.8rem;
             
             &:last-child  {
               color: #000000;
             }
             &:first-child {
               text-align: right;
-              font-size: 0.8rem;
             }
           }
         }

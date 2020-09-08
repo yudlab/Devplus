@@ -137,21 +137,32 @@ export default {
       }
     },
     indentCode(e, $event){
-      this.code = prettier.format(e, {
-         parser: "html",
-         printWidth: 300,
-         plugins: [htmlPrettier],
-         });
-      $($event.target).addClass('animated heartBeat')
-      setTimeout(function(){
-        $($event.target).removeClass('animated heartBeat')
-      }, 2000)
+         try {
+           var prettyCode = prettier.format(e, {
+            parser: "html",
+            printWidth: 5000,
+            plugins: [htmlPrettier],
+          })
+         } catch(e) {
+           console.log('Error: '+e)
+           $($event.target).addClass('failed')
+           setTimeout(function(){
+            $($event.target).removeClass('failed')
+           }, 5000)
+         } finally {
+           this.code = prettyCode;
+            $($event.target).addClass('animated heartBeat')
+            setTimeout(function(){
+              $($event.target).removeClass('animated heartBeat')
+            }, 2000)
+         }
     },
     toggleExplorerr(){
       this.toggleExplorer = (this.toggleExplorer)?false:true;
     },
     optimizeNews(){
       this.code = yud.cleanNews(this.code)
+      yud.tagsCheck(this.code)
     },
     copyToClipboard: function ($event){
       yud.copyToClipboard(this.code)
@@ -256,7 +267,7 @@ export default {
   mounted() {
     this.loadExports(),
     $.codemi = this.$refs.codeinstance.codemirror
-    document.documentElement.requestFullscreen()
+    //document.documentElement.requestFullscreen()
   },
   watch:{
     code(){
